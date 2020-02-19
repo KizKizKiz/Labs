@@ -17,11 +17,11 @@ public class Date implements Comparable<Date> {
     }
     private Random m_rand = new Random();
     public Date(){
-        year = m_rand.nextInt(2970-1970+1)+1970;
+        this.year = m_rand.nextInt(2970-1970+1)+1970;
         int rules[]={0,31,28,31,30,31,30,31,31,30,31,30,31};
         if(year%4==0) rules[2]++;
-        month = m_rand.nextInt(12-1+1)+1;
-        day = m_rand.nextInt(rules[month])+1;
+        this.month = m_rand.nextInt(12-1+1)+1;
+        this.day = m_rand.nextInt(rules[month])+1;
     }
     @Override
     public String toString(){

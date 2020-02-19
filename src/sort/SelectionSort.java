@@ -1,6 +1,6 @@
 package sort;
 
-public class SelectionSort extends AbstractSort implements ISort{
+public class SelectionSort extends AbstractSort{
     @Override
     public void Sort(Comparable[] a){
         int N=a.length;
@@ -11,5 +11,10 @@ public class SelectionSort extends AbstractSort implements ISort{
             }
             exch(a,i,min);
         }
+    }
+
+    @Override
+    public String GetSortName() {
+        return "Selection sort";
     }
 }

@@ -1,6 +1,7 @@
 package sort;
 
-public abstract class AbstractSort {
+public abstract class AbstractSort implements ISort {
+    public abstract String GetSortName();
     protected static boolean less(Comparable a, Comparable b){
         return a.compareTo(b)<0;
     }

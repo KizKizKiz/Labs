@@ -1,7 +1,6 @@
 package sort;
 
-public class InsertionSort extends AbstractSort implements ISort{
-
+public class InsertionSort extends AbstractSort{
     @Override
     public void Sort(Comparable[] a) {
         int N = a.length;
@@ -10,5 +9,10 @@ public class InsertionSort extends AbstractSort implements ISort{
                 exch(a,j,j-1);
             }
         }
+    }
+
+    @Override
+    public String GetSortName() {
+        return "Insertion sort";
     }
 }

@@ -1,4 +1,4 @@
-package com.structures;
+package com.structures.queue;
 
 import java.util.Iterator;
 

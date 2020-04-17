@@ -1,4 +1,4 @@
-package com.heap;
+package com.structures.heap;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,6 +1,4 @@
-package com.linkedlist;
-
-import java.util.Iterator;
+package com.structures.linkedlist;
 
 public class SortedLinkedList<T extends Comparable> implements Iterable<T>{
     protected class Node<T>{

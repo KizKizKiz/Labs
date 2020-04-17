@@ -1,4 +1,4 @@
-package com.structures;
+package com.structures.stack;
 
 import java.util.Stack;
 import java.util.StringTokenizer;

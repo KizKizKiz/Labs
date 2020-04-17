@@ -1,4 +1,4 @@
-package com.linkedlist;
+package com.structures.linkedlist;
 import java.util.Random;
 
 public class SortedLinkedListClient {

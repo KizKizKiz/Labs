@@ -1,4 +1,4 @@
-package com.linkedlist;
+package com.structures.linkedlist;
 
 public class SortedLinkedListEx extends SortedLinkedList<Double>{
     public double Median() {

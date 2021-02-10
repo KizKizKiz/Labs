@@ -1,1 +1,2 @@
-dotnet build ; dotnet run;
+Ctrl+C Ctrl+V:
+dotnet build ; dotnet run

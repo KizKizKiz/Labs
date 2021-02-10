@@ -1,1 +1,1 @@
-Labs
+dotnet build ; dotnet run;

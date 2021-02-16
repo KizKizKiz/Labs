@@ -20,13 +20,15 @@ namespace ConsoleApp.Graph
         /// </summary>
         public sealed class AdjacencyListItem
         {
-            public IEnumerable<int> Items { get; }
-            public AdjacencyListItem(IEnumerable<int> items)
+            public int Vertex { get; }
+            public IEnumerable<int> Adjacencies { get; }
+            public AdjacencyListItem(int vertex, IEnumerable<int> adjacencies)
             {
-                Items = items ?? throw new ArgumentNullException(nameof(items));
+                Adjacencies = adjacencies ?? throw new ArgumentNullException(nameof(adjacencies));
+                Vertex = vertex;
             }
 
-            public IEnumerator<int> GetEnumerator() => Items.GetEnumerator();
+            public IEnumerator<int> GetEnumerator() => Adjacencies.GetEnumerator();
         }
 
         public sealed class DFSWalker : IEnumerable<int>
@@ -168,7 +170,7 @@ namespace ConsoleApp.Graph
 
             using var streamReader = new StreamReader(filePath);
             using var csvReader = new CsvReader(streamReader, config);
-             
+
             return new UnOrientedGraph(csvReader.GetRecords<AdjacencyListItem>());
         }
 
@@ -176,7 +178,7 @@ namespace ConsoleApp.Graph
         /// Возвращает сгенерированный граф из количества вершин равной <paramref name="vertices"/>.
         /// </summary>
         /// <param name="vertices">Количество вершин.</param>
-        public static UnOrientedGraph Generate(int vertices)
+        public static UnOrientedGraph Generate(int vertices, int minCohesionPow)
         {
             if (vertices <= 0)
             {
@@ -186,48 +188,53 @@ namespace ConsoleApp.Graph
             {
                 throw new ArgumentOutOfRangeException(nameof(vertices), $"The \"{nameof(vertices)}\" must be less or equal to {MAX_VERTEXES}.");
             }
-
-            return GenerateCore(vertices);
-        }
-
-        private static UnOrientedGraph GenerateCore(int vertices)
-        {
-            int MinEdges() => vertices / 2;
-
-            var adjList = Enumerable.Range(0, vertices)
-                .Select(_ => new List<int>())
-                .ToList();
-
-            var minEdges = MinEdges();
-            var index = 0;
-            foreach (var list in adjList)
+            if (minCohesionPow >= vertices)
             {
-                var elements = _random.Next(vertices);
-                if (elements < minEdges)
-                {
-                    elements = minEdges;
-                }
-                _ = Enumerable
-                    .Range(0, elements)
-                    .Aggregate((s, r) =>
-                    {
-                        while (true)
-                        {
-                            var addedElement = _random.Next(vertices);
-                            if (!list.Contains(addedElement) && addedElement != index)
-                            {
-                                list.Add(addedElement);
-                                break;
-                            }
-                        }
-                        return r;
-                    });
-                index++;
+                throw new ArgumentException($"The '{nameof(minCohesionPow)} must be less than {vertices}'.", nameof(minCohesionPow));
             }
 
-            return new UnOrientedGraph(adjList.Select(item => new AdjacencyListItem(item)));
+            return GenerateCore(vertices, minCohesionPow);
         }
 
-        private static Random _random = new Random();
+        private static UnOrientedGraph GenerateCore(int vertices, int minCohesionPow)
+        {
+            var mapVertexAndLists = Enumerable
+                .Range(0, vertices)
+                .ToDictionary(v => v,
+                v =>
+                {
+                    var elements = Convert.ToInt32(_random.NextDouble() * (vertices - 1));
+                    elements = elements < minCohesionPow ? minCohesionPow : elements;
+
+                    return (elements, Items : new HashSet<int>(elements));
+                });
+
+            foreach (var pair in mapVertexAndLists)
+            {
+                _ = Enumerable
+                    .Range(0, pair.Value.elements + 1)
+                    .Aggregate((ff, ss) =>
+                    {
+                        while (pair.Value.Items.Count < pair.Value.elements)
+                        {
+                            var addedVertex = Convert.ToInt32(_random.NextDouble() * (vertices - 1));
+
+                            if (!pair.Value.Items.Contains(addedVertex) && !addedVertex.Equals(pair.Key))
+                            {
+                                _ = pair.Value.Items.Add(addedVertex);
+
+                                if (!mapVertexAndLists[addedVertex].Items.Contains(pair.Key))
+                                {
+                                    _ = mapVertexAndLists[addedVertex].Items.Add(pair.Key);
+                                }
+                            }
+                        }
+                        return ss;
+                    });
+            }
+
+            return new UnOrientedGraph(mapVertexAndLists.Select(kv => new AdjacencyListItem(kv.Key, kv.Value.Items)));
+        }
+        private static Random _random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,33 +14,15 @@ namespace ConsoleApp
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            //var fileName = "graph.csv";
+            var fileName = "graph.csv";
 
-            //var graph = UnOrientedGraph.Generate(6);
+            var graph = UnOrientedGraph.Generate(10, 3);
 
-            //graph.AdjacensyList.DumpToCSV(fileName);
+            graph.AdjacensyList.DumpToCSV(fileName);
 
-            //WriteLine(await File.ReadAllTextAsync(fileName));
-
-            //foreach (var item in graph.SetupDFSWalking())
-            //{
-            //    Write(item + " ");
-            //}
-            //WriteLine("");
-
-            //foreach (var item in graph.SetupBFSWalking())
-            //{
-            //    Write(item + " ");
-            //}
-
-            //WriteLine();
-
-            foreach (var item in PrimaryQueue<int>.CreateMinPrimaryQueue(Enumerable.Range(0, 16).Reverse()))
-            {
-                WriteLine(item);
-            }
+            WriteLine(File.ReadAllText(fileName));
         }
     }
 }

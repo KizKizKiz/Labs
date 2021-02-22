@@ -1,4 +1,5 @@
-
+*.suo
+*.dtbcache.v2
 *.class
 out/
 .idea/

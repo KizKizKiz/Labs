@@ -8,31 +8,10 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace ConsoleApp.Extensions
+namespace Library.GraphTypes
 {
     public static class Extensions
     {
-        public static bool IsSorted<T>(this IEnumerable<T> source)
-            where T : IComparable<T>
-        {
-            using var enumerator = source.GetEnumerator();
-            var current = default(T);
-            if (enumerator.MoveNext())
-                current = enumerator.Current;
-            enumerator.Reset();
-            var result = true;
-            while (enumerator.MoveNext())
-            {
-                if (current.CompareTo(enumerator.Current) > 0)
-                {
-                    result = false;
-                    break;
-                }
-                current = enumerator.Current;
-            }
-            return result;
-        }
-
         /// <summary>
         /// Создает и записывает в файл находящийся по пути <paramref name="filePath"/> последовательность в формате CSV.
         /// </summary>
@@ -49,7 +28,11 @@ namespace ConsoleApp.Extensions
             }
 
             var fileName = $"Sequence_{DateTime.UtcNow.ToString("HH-mm-ss")}.csv";
-            var config = new CsvConfiguration(CultureInfo.CurrentCulture, delimiter: ",", hasHeaderRecord: false);
+            var config = new CsvConfiguration(CultureInfo.CurrentCulture)
+            {
+                Delimiter = ",",
+                HasHeaderRecord = false
+            };
 
             filePath = filePath is not null ? filePath : fileName;
 

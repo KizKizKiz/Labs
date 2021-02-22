@@ -7,8 +7,9 @@ using System.Linq;
 
 using CsvHelper;
 using CsvHelper.Configuration;
+using MathNet.Numerics.Distributions;
 
-namespace ConsoleApp.Graph
+namespace Library.GraphTypes
 {
     /// <summary>
     /// Представляет неориентированный граф.
@@ -163,10 +164,11 @@ namespace ConsoleApp.Graph
                 throw new ArgumentException($"The '{nameof(filePath)}' is empty or has only whitespaces.");
             }
 
-            var config = new CsvConfiguration(
-                CultureInfo.CurrentCulture,
-                delimiter: ",",
-                hasHeaderRecord: false);
+            var config = new CsvConfiguration(CultureInfo.CurrentCulture)
+            {
+                Delimiter = ",",
+                HasHeaderRecord = false
+            };
 
             using var streamReader = new StreamReader(filePath);
             using var csvReader = new CsvReader(streamReader, config);
@@ -178,7 +180,7 @@ namespace ConsoleApp.Graph
         /// Возвращает сгенерированный граф из количества вершин равной <paramref name="vertices"/>.
         /// </summary>
         /// <param name="vertices">Количество вершин.</param>
-        public static UnOrientedGraph Generate(int vertices, int minCohesionPow)
+        public static UnOrientedGraph Generate(int vertices, int meanCohesion)
         {
             if (vertices <= 0)
             {
@@ -188,23 +190,23 @@ namespace ConsoleApp.Graph
             {
                 throw new ArgumentOutOfRangeException(nameof(vertices), $"The \"{nameof(vertices)}\" must be less or equal to {MAX_VERTEXES}.");
             }
-            if (minCohesionPow >= vertices)
+            if (meanCohesion >= vertices)
             {
-                throw new ArgumentException($"The '{nameof(minCohesionPow)} must be less than {vertices}'.", nameof(minCohesionPow));
+                throw new ArgumentException($"The '{nameof(meanCohesion)} must be less than {vertices}'.", nameof(meanCohesion));
             }
 
-            return GenerateCore(vertices, minCohesionPow);
+            return GenerateCore(vertices, meanCohesion);
         }
 
-        private static UnOrientedGraph GenerateCore(int vertices, int minCohesionPow)
+        private static UnOrientedGraph GenerateCore(int vertices, int meanCohesion)
         {
             var mapVertexAndLists = Enumerable
                 .Range(0, vertices)
                 .ToDictionary(v => v,
                 v =>
                 {
-                    var elements = Convert.ToInt32(_random.NextDouble() * (vertices - 1));
-                    elements = elements < minCohesionPow ? minCohesionPow : elements;
+                    var elements = Poisson.Sample(_random, meanCohesion);
+                    elements = elements == 0 ? 1 : elements;
 
                     return (elements, Items : new HashSet<int>(elements));
                 });

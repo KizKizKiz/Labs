@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleApp.Graph
+namespace Library.GraphTypes
 {
     /// <summary>
     /// Представляет интерфейс очереди с приоритетом.

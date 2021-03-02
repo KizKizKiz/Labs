@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.GraphTypes.Views
+namespace Library.Views
 {
     public class UnorientedEdgeWithWeightView<TValue> : EdgesWithWeightView<TValue>
         where TValue : IEquatable<TValue>, IComparable<TValue>

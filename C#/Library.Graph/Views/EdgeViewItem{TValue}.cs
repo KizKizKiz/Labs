@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library.GraphTypes.Views
+namespace Library.Views
 {
     public readonly struct EdgeViewItem<TValue> : IEdgeViewItem<TValue>
         where TValue : IEquatable<TValue>, IComparable<TValue>

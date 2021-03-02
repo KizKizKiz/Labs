@@ -3,18 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Library.GraphTypes.Operations
+using Library.GraphTypes;
+
+namespace Library.Operations
 {
+    /// <summary>
+    /// Представляет реализацию обхода в глубину неориентированного графа на списках смежности.
+    /// </summary>
+    /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class DFSIterator<TValue> : IEnumerable<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
     {
         public DFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {
             _graph = graph ?? throw new ArgumentNullException(nameof(graph));
         }
 
-        public IEnumerator<TValue> GetEnumerator() => SetupDFS().GetEnumerator();
-        private IEnumerable<TValue> SetupDFS()
+        /// <summary>
+        /// Возвращает итератор обхода вершин.
+        /// </summary>
+        public IEnumerator<TValue> GetEnumerator() => SetupIterator().GetEnumerator();
+        private IEnumerable<TValue> SetupIterator()
         {
             var mapVertexAndIsMarked = _graph.View.Items.ToDictionary(kv => kv.Vertex, _ => false);
             var passedVertices = new List<TValue>();

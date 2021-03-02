@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Library.GraphTypes.Views
+namespace Library.Views
 {
     public abstract class GraphView<TViewItem, TValue> : IGraphView<TViewItem, TValue>
         where TValue : IEquatable<TValue>, IComparable<TValue>

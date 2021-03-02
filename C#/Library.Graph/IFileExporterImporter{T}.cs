@@ -2,9 +2,19 @@
 
 namespace Library.GraphTypes
 {
-    public interface IFileExporterImporter<T>
+    /// <summary>
+    /// Представляет контракт выгрузки и загрузки из файла.
+    /// </summary>
+    public interface IFileExporterImporter
     {
-        Task ExportAsync(string fileName);
-        Task<T> ImportAsync(string fileName);
+        /// <summary>
+        /// Выгружает в файл.
+        /// </summary>
+        Task ExportAsync();
+
+        /// <summary>
+        /// Загружает из файла <paramref name="fileName"/>.
+        /// </summary>
+        Task ImportAsync(string fileName);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.GraphTypes.Views
+namespace Library.Views
 {
     public abstract class EdgesWithWeightView<TValue> : EdgesView<EdgeViewItemWithWeight<TValue>, TValue>
         where TValue : IEquatable<TValue>, IComparable<TValue>

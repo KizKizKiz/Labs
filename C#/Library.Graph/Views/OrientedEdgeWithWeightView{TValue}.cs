@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace Library.GraphTypes.Views
+namespace Library.Views
 {
     public class OrientedEdgeWithWeightView<TValue> : EdgesWithWeightView<TValue>
         where TValue : IEquatable<TValue>, IComparable<TValue>

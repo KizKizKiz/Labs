@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Threading;
-
-using static System.Console;
-
 using Library.GraphTypes;
-using Library.GraphTypes.Operations;
-using Library.GraphTypes.Views;
 
 namespace Console.Graph
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // var fileName = "graph.csv";
 
@@ -25,14 +16,17 @@ namespace Console.Graph
             // graph.AdjacensyList.DumpToCSV(fileName);
 
             // WriteLine(File.ReadAllText(fileName));
-            var index = 0;
-            var aa = UnorientedAdjacensiesGraph<string>.GenerateInCoherent(10, 3, () => $"Some {index++}");
-            foreach (var item in new DFSIterator<string>(aa))
-            {
-                WriteLine(item);
-            }
-
+            // var index = 0;
+            // var aa = OrientedEdgeWithWeightGraph<string>.GenerateInCoherent(400, 20, () => $"Some {index++}");
+            // foreach (var item in aa.View.Items)
+            // {
+            //     System.Console.WriteLine($"{item.First} -> {item.Second} : {item.Weight}");
+            // }
+            
+            var graph = OrientedEdgeWithWeightGraph<IntConvertible>.GenerateWithWeakCohesion(10, 4, () => new IntConvertible(_rnd.Next(0, 30)));
+            await graph.ExportAsync();
         }
         private static Random _rnd = new Random();
     }
+
 }

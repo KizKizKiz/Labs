@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Library.Views;
+using OfficeOpenXml;
 
 namespace Library.GraphTypes
 {
@@ -20,8 +21,8 @@ namespace Library.GraphTypes
         /// Конструктор графа.
         /// </summary>
         /// <param name="edgeType">Тип ребер графа.</param>
-        public OrientedEdgeWithWeightGraph(EdgeType edgeType)
-            : base(edgeType) { }
+        public OrientedEdgeWithWeightGraph()
+            : base(EdgeType.Directed) { }
 
         /// <summary>
         /// Конструктор графа.
@@ -62,49 +63,55 @@ namespace Library.GraphTypes
 
         protected override async Task ExportCoreAsync(string fileName)
         {
-            using var writer = new StreamWriter(new FileStream(fileName, FileMode.Create), Encoding.Unicode);
+            await Task.Yield();
 
-            writer.WriteLine($"Label;Source;Target;Weight;Type");
-            var i = 0;
-            foreach (var item in View.Items)
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using var package = new ExcelPackage(new FileInfo(fileName));
+            var worksheet = package.Workbook.Worksheets.Add("GRAPH_DUMP");
+
+            worksheet.Cells[1, 1].Value = "Source";
+            worksheet.Cells[1, 2].Value = "Target";
+            worksheet.Cells[1, 3].Value = "Weight";
+            worksheet.Cells[1, 4].Value = "Type";
+            worksheet.Cells[1, 5].Value = "Label";
+
+            for (int i = 0; i < View.Items.Count; i++)
             {
-                await writer.WriteLineAsync(string.Join(';', $"v{i++}", item.First, item.Second, item.Weight, EdgeType));
+                worksheet.Cells[i + 2, 1].Value = View.Items[i].First.ToString();
+                worksheet.Cells[i + 2, 2].Value = View.Items[i].Second.ToString();
+                worksheet.Cells[i + 2, 3].Value = View.Items[i].Weight;
+                worksheet.Cells[i + 2, 4].Value = EdgeType;
+                worksheet.Cells[i + 2, 5].Value = $"From '{View.Items[i].First}' to '{View.Items[i].Second}'";
             }
+
+            await package.SaveAsync();
         }
 
         protected override async Task ImportCoreAsync(string fileName)
         {
-            using var reader = new StreamReader(new FileStream(fileName, FileMode.Open, FileAccess.Read), Encoding.Unicode);
-            _ = await reader.ReadLineAsync();
+            await Task.Yield();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using var package = new ExcelPackage(new FileInfo(fileName));
+            var worksheet = package.Workbook.Worksheets[0];
 
             var edges = new List<EdgeViewItemWithWeight<TValue>>();
-            while(!reader.EndOfStream)
+            var vertexSet = new HashSet<TValue>();
+            for (int i = 2; i <= worksheet.Dimension.End.Row; i++) // int i = 1 Skip headers
             {
-                edges.Add(ParseLine(await reader.ReadLineAsync()));
+                var entity = new TValue();
+                var edge = new EdgeViewItemWithWeight<TValue>(
+                    entity.ConvertFromString(worksheet.Cells[i, 1].Value.ToString()),
+                    entity.ConvertFromString(worksheet.Cells[i, 2].Value.ToString()),
+                    Convert.ToDouble(worksheet.Cells[i, 3].Value.ToString()));
+                _ = vertexSet.Add(edge.First);
+                _ = vertexSet.Add(edge.Second);
+                edges.Add(edge);
             }
+            VerticesSet = vertexSet.ToList();
             View = new OrientedEdgeWithWeightView<TValue>(edges);
-        }
-
-        private EdgeViewItemWithWeight<TValue> ParseLine(string edge)
-        {
-            var blocks = edge.Split(';');
-            if (blocks.Length != 5)
-            {
-                throw new InvalidOperationException("Received invalid line that doesn't match to 'Source;Target;Weight;Type' pattern.");
-            }
-            var entity = new TValue();
-
-            var firstVertex = entity.ConvertFromString(blocks[1]);
-            var secondVertex = entity.ConvertFromString(blocks[2]);
-            var weight = Convert.ToDouble(blocks[3]);
-            var edgeType = Enum.Parse<EdgeType>(blocks[4]);
-
-            if (edgeType != EdgeType.Directed)
-            {
-                throw new InvalidOperationException($"Received invalid edge type '{edgeType}'.");
-            }
-
-            return new EdgeViewItemWithWeight<TValue>(firstVertex, secondVertex, weight);
         }
 
         private static void InitializeCoherentMapCore()

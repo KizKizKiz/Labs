@@ -34,5 +34,9 @@ namespace Library.Views
             }
             return 0;
         }
+        public override string ToString()
+        {
+            return $"{First} -> {Second} ({Weight})";
+        }
     }
 }

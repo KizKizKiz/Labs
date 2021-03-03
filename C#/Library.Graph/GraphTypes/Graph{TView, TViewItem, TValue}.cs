@@ -68,7 +68,11 @@ namespace Library.GraphTypes
         /// <summary>
         /// Представляет множество вершин графа.
         /// </summary>
-        protected static IReadOnlyList<TValue> VerticesSet => _verticesSet;
+        protected static IReadOnlyList<TValue> VerticesSet 
+        { 
+            get => _verticesSet;
+            set => _verticesSet = value.ToList();
+        }
 
         protected static Random RandomGenerator => _random;
         protected static void InitializeVerticesSetAndMap(int verticesCount, int meanCohesion, Func<TValue> factory)
@@ -84,7 +88,7 @@ namespace Library.GraphTypes
                 });
             _verticesSet.AddRange(vertices);
 
-            _verticesSet.ForEach((Action<TValue>)(v =>
+            _verticesSet.ForEach((v =>
             {
                 var elements = Poisson.Sample(_random, meanCohesion);
                 elements = elements == 0 ? 1 : elements;
@@ -95,7 +99,7 @@ namespace Library.GraphTypes
 
         private readonly static Dictionary<TValue, (int Count, HashSet<TValue> Items)> _mapVertexAndLists
             = new Dictionary<TValue, (int Count, HashSet<TValue> Items)>();
-        private readonly static List<TValue> _verticesSet = new List<TValue>();
+        private static List<TValue> _verticesSet = new List<TValue>();
         private readonly static Random _random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
     }
 }

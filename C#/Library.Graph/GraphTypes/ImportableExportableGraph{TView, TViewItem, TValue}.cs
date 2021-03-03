@@ -35,7 +35,7 @@ namespace Library.GraphTypes
         /// <inheritdoc/>
         public async Task ExportAsync()
         {
-            var fileName = $"graph-dump-{DateTime.Now.ToString("HH-mm-ss")}.xls";
+            var fileName = $"graph-dump-{DateTime.Now.ToString("HH-mm-ss")}.xlsx";
 
             await ExportCoreAsync(fileName);
         }

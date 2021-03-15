@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using Library.GraphTypes;
+using Library.Graph.ConvertibleTypes;
+using Library.Graph.Types;
 
-namespace Library.Operations
+namespace Library.Graph.Operations
 {
     /// <summary>
     /// Представляет реализацию обхода в ширину неориентированного графа на списках смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class BFSIterator<TValue> : IEnumerable<TValue>
-         where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
+         where TValue : IEquatable<TValue>, IStringConvertible<TValue>
     {
         public BFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {

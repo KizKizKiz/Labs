@@ -1,4 +1,4 @@
-namespace Library.Views
+namespace Library.Graph.Views
 {
     /// <summary>
     /// Представляет тип ребер графа.

@@ -1,13 +1,13 @@
 using System;
 
-namespace Library.Views
+namespace Library.Graph.Views
 {
     /// <summary>
     /// Представляет элемент представления в виде списка смежности.
     /// </summary>
     /// <typeparam name="TView">Тип представления графа.</typeparam>
     public readonly struct EdgeViewItemWithWeight<TValue> : IEdgeViewItem<TValue>, IEquatable<EdgeViewItemWithWeight<TValue>>, IComparable<EdgeViewItemWithWeight<TValue>>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
     {
         public TValue First { get; }
         public TValue Second { get; }
@@ -18,9 +18,10 @@ namespace Library.Views
             Second = second;
             Weight = weight;
         }
-
-        public readonly bool Equals(EdgeViewItemWithWeight<TValue> other)
-            => First.Equals(other.First) && Second.Equals(other.Second) && Weight == other.Weight;
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(First, Second, Weight);
+        }
 
         public int CompareTo(EdgeViewItemWithWeight<TValue> other)
         {
@@ -38,5 +39,8 @@ namespace Library.Views
         {
             return $"{First} -> {Second} ({Weight})";
         }
+
+        public bool Equals(EdgeViewItemWithWeight<TValue> y)
+            => First.Equals(y.First) && Second.Equals(y.Second) && Weight == y.Weight;
     }
 }

@@ -2,17 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using Library.GraphTypes;
-using Library.Views;
+using Library.Graph.Types;
+using Library.Graph.Views;
 using Library.Graph;
+using Library.Graph.ConvertibleTypes;
 
-namespace Library.Operations
+namespace Library.Graph.Operations
 {
-   public sealed class MinimumSpanningTreeIterator<TGraph, TValue> : IEnumerable<EdgeViewItemWithWeight<TValue>>
-        where TGraph : EdgeWithWeightGraph<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
+   public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgeViewItemWithWeight<TValue>>
+        where TValue : IEquatable<TValue>, IStringConvertible<TValue>, new()
    {
-       public MinimumSpanningTreeIterator(TGraph graph)
+       public MinimumSpanningTreeIterator(OrientedEdgeWithWeightGraph<TValue> graph)
        {
            _graph = graph ?? throw new ArgumentNullException(nameof(graph));
        }
@@ -40,6 +40,6 @@ namespace Library.Operations
 
        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-       private readonly TGraph _graph;
+       private readonly OrientedEdgeWithWeightGraph<TValue> _graph;
    }
 }

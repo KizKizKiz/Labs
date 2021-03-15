@@ -1,15 +1,16 @@
 using System;
 
-using Library.Views;
+using Library.Graph.ConvertibleTypes;
+using Library.Graph.Views;
 
-namespace Library.GraphTypes
+namespace Library.Graph.Types
 {
     /// <summary>
     /// Представляет базовую реализацию всех типов графов, основанных на массивах ребер.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public abstract class EdgeWithWeightGraph<TValue> : ImportableExportableGraph<EdgesWithWeightView<TValue>, EdgeViewItemWithWeight<TValue>, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
+        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
     {
         /// <summary>
         /// Конструктор графа.

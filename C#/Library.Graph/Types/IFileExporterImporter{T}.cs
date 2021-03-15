@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Library.GraphTypes
+namespace Library.Graph.Types
 {
     /// <summary>
     /// Представляет контракт выгрузки и загрузки из файла.
@@ -8,9 +8,9 @@ namespace Library.GraphTypes
     public interface IFileExporterImporter
     {
         /// <summary>
-        /// Выгружает в файл.
+        /// Выгружает в файл и возвращает название файла.
         /// </summary>
-        Task ExportAsync();
+        Task<string> ExportAsync();
 
         /// <summary>
         /// Загружает из файла <paramref name="fileName"/>.

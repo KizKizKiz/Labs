@@ -1,4 +1,4 @@
-namespace Library.GraphTypes
+namespace Library.Graph.ConvertibleTypes
 {
     public interface IStringConvertible<T>
     {

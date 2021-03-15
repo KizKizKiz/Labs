@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.Views
+namespace Library.Graph.Views
 {
     /// <summary>
     /// Представляет базовое представление основанное на массиве ребер.
@@ -9,7 +9,7 @@ namespace Library.Views
     /// <typeparam name="TView">Тип представления графа.</typeparam>
     public abstract class EdgesView<TViewItem, TValue> : GraphView<TViewItem, TValue>
         where TViewItem : IEdgeViewItem<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
     {
         public EdgesView(IEnumerable<TViewItem> items)
             :base(items) { }

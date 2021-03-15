@@ -5,9 +5,9 @@ using System.ComponentModel;
 
 using MathNet.Numerics.Distributions;
 
-using Library.Views;
+using Library.Graph.Views;
 
-namespace Library.GraphTypes
+namespace Library.Graph.Types
 {
     /// <summary>
     /// Представляет базовую реализацию всех типов графов.
@@ -18,7 +18,7 @@ namespace Library.GraphTypes
     public abstract class Graph<TView, TViewItem, TValue>
         where TViewItem : IGraphViewItem<TValue>
         where TView : IGraphView<TViewItem, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
     {
         /// <summary>
         /// Возвращает контракт представления графа.
@@ -37,7 +37,7 @@ namespace Library.GraphTypes
 
         public Graph(EdgeType edgeType)
         {
-            if (!Enum.IsDefined<EdgeType>(edgeType))
+            if (!Enum.IsDefined(edgeType))
             {
                 throw new InvalidEnumArgumentException(nameof(edgeType), (int)edgeType, typeof(EdgeType));
             }
@@ -51,7 +51,7 @@ namespace Library.GraphTypes
         /// <param name="edgeType">Тип ребер графа.</param>
         public Graph(TView view, EdgeType edgeType)
         {
-            if (!Enum.IsDefined<EdgeType>(edgeType))
+            if (!Enum.IsDefined(edgeType))
             {
                 throw new InvalidEnumArgumentException(nameof(edgeType), (int)edgeType, typeof(EdgeType));
             }
@@ -75,6 +75,7 @@ namespace Library.GraphTypes
         }
 
         protected static Random RandomGenerator => _random;
+
         protected static void InitializeVerticesSetAndMap(int verticesCount, int meanCohesion, Func<TValue> factory)
         {
             var vertices = new HashSet<TValue>(verticesCount);
@@ -91,7 +92,9 @@ namespace Library.GraphTypes
             _verticesSet.ForEach((v =>
             {
                 var elements = Poisson.Sample(_random, meanCohesion);
+
                 elements = elements == 0 ? 1 : elements;
+                elements = elements >= verticesCount - 1 ? verticesCount - 1 : elements;
 
                 _mapVertexAndLists.Add(v, (Count: elements, Items: new HashSet<TValue>()));
             }));

@@ -2,22 +2,22 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Library.Views;
+using Library.Graph.ConvertibleTypes;
+using Library.Graph.Views;
 
-namespace Library.GraphTypes
+namespace Library.Graph.Types
 {
     /// <summary>
-    /// Представляет реализацию ориентированного графа на списках смежности.
+    /// Представляет реализацию неориентированного графа на списках смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
-    public sealed class OrientedAdjacensiesGraph<TValue> : ImportableExportableGraph<OrientedAdjacensiesView<TValue>, AdjacensyViewItem<TValue>, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
+    public sealed class UnorientedAdjacensiesGraph<TValue> : ImportableExportableGraph<UnorientedAdjacensiesView<TValue>, AdjacensyViewItem<TValue>, TValue>
+        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
     {
         /// <summary>
         /// Конструктор графа.
         /// </summary>
-        /// <param name="edgeType">Тип ребер графа.</param>
-        public OrientedAdjacensiesGraph(EdgeType edgeType)
+        public UnorientedAdjacensiesGraph(EdgeType edgeType)
             : base(edgeType) { }
 
         /// <summary>
@@ -25,18 +25,18 @@ namespace Library.GraphTypes
         /// </summary>
         /// <param name="view">Представления ребер на списках смежности.</param>
         /// <param name="edgeType">Тип ребер графа.</param>
-        public OrientedAdjacensiesGraph(OrientedAdjacensiesView<TValue> view, EdgeType edgeType)
-            : base(view, edgeType)
+        public UnorientedAdjacensiesGraph(UnorientedAdjacensiesView<TValue> view)
+            : base(view, EdgeType.Undirected)
         { }
 
         /// <summary>
-        /// Возвращает сгенерированный слабо связный граф с количеством вершин равным <paramref name="vertices"/>
+        /// Возвращает сгенерированный неориентированный связный граф с количеством вершин равным <paramref name="vertices"/>
         /// и средней степенью вершин равной <paramref name="meanCohesionPower"/>.
         /// </summary>
         /// <param name="vertices">Количество вершин.</param>
         /// <param name="meanCohesionPower">Средняя степень вершин.</param>
         /// <param name="factory">Фабрика элементов.</param>
-        public static OrientedAdjacensiesGraph<TValue> GenerateWithWeakCohesion(int vertices, int meanCohesionPower, Func<TValue> factory)
+        public static UnorientedAdjacensiesGraph<TValue> Generate(int vertices, int meanCohesionPower, Func<TValue> factory)
         {
             InitializeVerticesSetAndMap(vertices, meanCohesionPower, factory);
             InitializeCoherentMapCore();
@@ -44,20 +44,20 @@ namespace Library.GraphTypes
         }
 
         /// <summary>
-        /// Возвращает сгенерированный несвязный граф с количеством вершин равным <paramref name="vertices"/>
+        /// Возвращает сгенерированный неориентированный несвязный граф с количеством вершин равным <paramref name="vertices"/>
         /// и средней степенью вершин равной <paramref name="meanCohesionPower"/>.
         /// </summary>
         /// <param name="vertices">Количество вершин.</param>
         /// <param name="meanCohesionPower">Средняя степень вершин.</param>
         /// <param name="factory">Фабрика элементов.</param>
-        public static OrientedAdjacensiesGraph<TValue> GenerateInCoherent(int vertices, int meanCohesionPower, Func<TValue> factory)
+        public static UnorientedAdjacensiesGraph<TValue> GenerateInCoherent(int vertices, int meanCohesionPower, Func<TValue> factory)
         {
             InitializeVerticesSetAndMap(vertices, meanCohesionPower, factory);
             InitializeInCoherentMapCore();
             return Build();
         }
 
-        protected override Task ExportCoreAsync(string fileName)
+        protected override Task<string> ExportCoreAsync(string fileName)
         {
             throw new NotImplementedException();
         }
@@ -69,16 +69,10 @@ namespace Library.GraphTypes
 
         private static void InitializeCoherentMapCore()
         {
-            _ = MapVertexAndLists
-                .Aggregate((f, s) =>
-                {
-                    s.Value.Items.Add(f.Key);
-                    return s;
-                });
             foreach (var pair in MapVertexAndLists)
             {
                 _ = Enumerable
-                    .Range(0, pair.Value.Count)
+                    .Range(0, pair.Value.Count + 1)
                     .Aggregate((ff, ss) =>
                     {
                         while (pair.Value.Items.Count < pair.Value.Count)
@@ -88,6 +82,11 @@ namespace Library.GraphTypes
                             if (!pair.Value.Items.Contains(addedVertex) && !addedVertex.Equals(pair.Key))
                             {
                                 _ = pair.Value.Items.Add(addedVertex);
+
+                                if (!MapVertexAndLists[addedVertex].Items.Contains(pair.Key))
+                                {
+                                    _ = MapVertexAndLists[addedVertex].Items.Add(pair.Key);
+                                }
                             }
                         }
                         return ss;
@@ -117,6 +116,11 @@ namespace Library.GraphTypes
                             if (!addedVertex.Equals(skipVertex) && !pair.Value.Items.Contains(addedVertex) && !addedVertex.Equals(pair.Key))
                             {
                                 _ = pair.Value.Items.Add(addedVertex);
+
+                                if (!MapVertexAndLists[addedVertex].Items.Contains(pair.Key))
+                                {
+                                    _ = MapVertexAndLists[addedVertex].Items.Add(pair.Key);
+                                }
                             }
                         }
                         return ss;
@@ -124,12 +128,11 @@ namespace Library.GraphTypes
             }
         }
 
-        private static OrientedAdjacensiesGraph<TValue> Build()
-            => new OrientedAdjacensiesGraph<TValue>(
-                new OrientedAdjacensiesView<TValue>(
+        private static UnorientedAdjacensiesGraph<TValue> Build()
+            => new UnorientedAdjacensiesGraph<TValue>(
+                new UnorientedAdjacensiesView<TValue>(
                     MapVertexAndLists
                     .Select(kv => new AdjacensyViewItem<TValue>(kv.Key, kv.Value.Items))
-                    .ToList()),
-                    EdgeType.Directed);
+                    .ToList()));
     }
 }

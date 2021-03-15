@@ -1,10 +1,11 @@
 using System;
 
-namespace Library.GraphTypes
+namespace Library.Graph.ConvertibleTypes
 {
     public readonly struct IntConvertible : IStringConvertible<IntConvertible>, IEquatable<IntConvertible>, IComparable<IntConvertible>
     {
         public int Number { get; }
+
         public IntConvertible(int number)
         {
             Number = number;
@@ -23,17 +24,15 @@ namespace Library.GraphTypes
         }
 
         public bool Equals(IntConvertible other)
-        {
-            return Number.Equals(other.Number);
-        }
+            => Number.Equals(other.Number);
 
         public int CompareTo(IntConvertible other)
-        {
-            return Number.CompareTo(other.Number);
-        }
+            => Number.CompareTo(other.Number);
+
         public override string ToString()
-        {
-            return Number.ToString();
-        }
+            => Number.ToString();
+
+        public static implicit operator IntConvertible(int number)
+            => new IntConvertible(number);
     }
 }

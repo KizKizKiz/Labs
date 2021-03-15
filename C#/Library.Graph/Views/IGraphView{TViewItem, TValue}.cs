@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Library.Views
+namespace Library.Graph.Views
 {
     /// <summary>
     /// Представляет контракт представления графа.
@@ -9,7 +9,7 @@ namespace Library.Views
     /// <typeparam name="TViewItem">Тип представления ребер.</typeparam>
     /// <typeparam name="TValue">Тип элементов ребер.</typeparam>
     public interface IGraphView<TViewItem, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
         where TViewItem : IGraphViewItem<TValue>
     {
         /// <summary>

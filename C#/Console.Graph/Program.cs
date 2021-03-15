@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Library.GraphTypes;
-using Library.Operations;
+
+using Library.Graph.Types;
+using Library.Graph.Extensions;
+using Library.Graph.ConvertibleTypes;
 
 namespace Console.Graph
 {
@@ -10,51 +11,24 @@ namespace Console.Graph
     {
         static async Task Main(string[] args)
         {
-            //UnorientedEdgeWithWeightGraph<IntConvertible> graph = await GenerateAndExportGraph();
-            UnorientedEdgeWithWeightGraph<IntConvertible> graph = new UnorientedEdgeWithWeightGraph<IntConvertible>();
-            await graph.ImportAsync("graph-dump-11-23-05.xlsx");
-            var aa = new MinimumSpanningTreeIterator<UnorientedEdgeWithWeightGraph<IntConvertible>, IntConvertible>(graph);
-            foreach (var item in aa)
+            var fileName = await GenerateAndExportGraph();
+
+            var graph = new OrientedAdjacensiesGraph<IntConvertible>();
+            await graph.ImportAsync(fileName);
+
+            foreach (var seq in graph.View.Items)
             {
-                System.Console.WriteLine(item);
+                System.Console.WriteLine(seq);
             }
         }
 
-        private static async Task<UnorientedEdgeWithWeightGraph<IntConvertible>> GenerateAndExportGraph()
+        private static async Task<string> GenerateAndExportGraph()
         {
-            var graph = UnorientedEdgeWithWeightGraph<IntConvertible>.GenerateWithWeakCohesion(10, 4, () => new IntConvertible(_rnd.Next(0, 30)));
-            await graph.ExportAsync();
-            return graph;
+            var graph = OrientedAdjacensiesGraph<IntConvertible>.GenerateWithWeakCohesion(4, 2, () => new IntConvertible(_rnd.Next(0, 30)));
+
+            return await graph.ExportAsync();
         }
 
         private static Random _rnd = new Random();
-    }
-    public struct StringConvertible : IStringConvertible<StringConvertible>, IEquatable<StringConvertible>, IComparable<StringConvertible>
-    {
-        public string Entity { get; private set; }
-
-        public StringConvertible(string entity)
-        {
-            Entity = entity;
-        }
-        public StringConvertible ConvertFromString(string entity)
-        {
-            Entity = entity;
-            return this;
-        }
-
-        public bool Equals(StringConvertible other)
-        {
-            return Entity.Equals(other.Entity);
-        }
-
-        public int CompareTo(StringConvertible other)
-        {
-            return Entity.CompareTo(other.Entity);
-        }
-        public override string ToString()
-        {
-            return Entity;
-        }
     }
 }

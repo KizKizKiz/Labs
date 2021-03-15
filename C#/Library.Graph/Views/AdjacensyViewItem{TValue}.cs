@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Library.Views
+namespace Library.Graph.Views
 {
     /// <summary>
     /// Представляет элемент представления в виде списка смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов.</typeparam>
     public readonly struct AdjacensyViewItem<TValue> : IGraphViewItem<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
     {
         /// <summary>
         /// Возвращает вершину списка смежности.
@@ -34,6 +34,15 @@ namespace Library.Views
             }
             Vertex = vertex ?? throw new ArgumentNullException(nameof(vertex));
             Items = items.ToList();
+        }
+
+        public override string ToString()
+        {
+            if (Items.Any())
+            {
+                return $"{Vertex} : {string.Join(" , ", Items)}";
+            }
+            return $"{Vertex} : Empty";
         }
     }
 }

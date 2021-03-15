@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class UnionFindStructure<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+namespace Library.Graph
+{
+    public class UnionFindStructure<TValue>
+        where TValue : IEquatable<TValue>
     {
         public UnionFindStructure(IEnumerable<TValue> elements)
         {
@@ -17,7 +19,7 @@ public class UnionFindStructure<TValue>
             }
             _mapVertexAndRank = elements
                 .ToDictionary(
-                    elem => elem, 
+                    elem => elem,
                     elem => (elem, 0));
         }
 
@@ -75,3 +77,4 @@ public class UnionFindStructure<TValue>
 
         private readonly Dictionary<TValue, (TValue Vertex, int Rank)> _mapVertexAndRank = new Dictionary<TValue, (TValue Vertex, int Rank)>();
     }
+}

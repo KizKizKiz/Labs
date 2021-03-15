@@ -2,20 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using Library.Views;
 using OfficeOpenXml;
 
-namespace Library.GraphTypes
+using Library.Graph.ConvertibleTypes;
+using Library.Graph.Views;
+
+namespace Library.Graph.Types
 {
     /// <summary>
     /// Представляет реализацию ориентированного графа на массиве ребер.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public sealed class OrientedEdgeWithWeightGraph<TValue> : EdgeWithWeightGraph<TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>, new()
+        where TValue : IEquatable<TValue>, IStringConvertible<TValue>, new()
     {
         /// <summary>
         /// Конструктор графа.
@@ -29,8 +30,8 @@ namespace Library.GraphTypes
         /// </summary>
         /// <param name="view">Представления ребер на массиве ребер.</param>
         /// <param name="edgeType">Тип ребер графа.</param>
-        public OrientedEdgeWithWeightGraph(OrientedEdgeWithWeightView<TValue> view, EdgeType edgeType)
-            : base(view, edgeType)
+        public OrientedEdgeWithWeightGraph(OrientedEdgeWithWeightView<TValue> view)
+            : base(view, EdgeType.Directed)
         { }
 
         /// <summary>
@@ -61,10 +62,8 @@ namespace Library.GraphTypes
             return Build();
         }
 
-        protected override async Task ExportCoreAsync(string fileName)
+        protected override async Task<string> ExportCoreAsync(string fileName)
         {
-            await Task.Yield();
-
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using var package = new ExcelPackage(new FileInfo(fileName));
@@ -86,6 +85,8 @@ namespace Library.GraphTypes
             }
 
             await package.SaveAsync();
+
+            return fileName;
         }
 
         protected override async Task ImportCoreAsync(string fileName)
@@ -183,8 +184,7 @@ namespace Library.GraphTypes
 
             return new OrientedEdgeWithWeightGraph<TValue>(
                 new OrientedEdgeWithWeightView<TValue>(
-                    GetIterator().SelectMany(seq => seq).Distinct().ToList()),
-                    EdgeType.Directed);
+                    GetIterator().SelectMany(seq => seq).ToList()));
         }
     }
 }

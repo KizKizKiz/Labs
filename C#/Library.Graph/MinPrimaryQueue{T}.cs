@@ -143,7 +143,6 @@ namespace Library.Graph
         }
 
         private TValue[] _items;
-        private readonly Func<TValue, TValue, bool> _comparer; 
         private int _count;
     }
 }

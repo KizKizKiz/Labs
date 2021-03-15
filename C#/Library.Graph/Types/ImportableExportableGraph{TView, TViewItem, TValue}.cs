@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using Library.Graph.ConvertibleTypes;
+using Library.Graph.Views;
 
-using Library.Views;
-
-namespace Library.GraphTypes
+namespace Library.Graph.Types
 {
     /// <summary>
     /// Представляет базовую реализацию всех импортируемых и экспортируемых типов графов.
@@ -14,7 +14,7 @@ namespace Library.GraphTypes
     public abstract class ImportableExportableGraph<TView, TViewItem, TValue> : Graph<TView, TViewItem, TValue>, IFileExporterImporter
         where TViewItem : IGraphViewItem<TValue>
         where TView : IGraphView<TViewItem, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>, IStringConvertible<TValue>
+        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
     {
         /// <summary>
         /// Конструктор графа.
@@ -33,11 +33,11 @@ namespace Library.GraphTypes
         { }
 
         /// <inheritdoc/>
-        public async Task ExportAsync()
+        public async Task<string> ExportAsync()
         {
             var fileName = $"graph-dump-{DateTime.Now.ToString("HH-mm-ss")}.xlsx";
 
-            await ExportCoreAsync(fileName);
+            return await ExportCoreAsync(fileName);
         }
 
         /// <inheritdoc/>
@@ -48,7 +48,8 @@ namespace Library.GraphTypes
             await ImportCoreAsync(fileName);
         }
 
-        protected abstract Task ExportCoreAsync(string fileName);
+        protected abstract Task<string> ExportCoreAsync(string fileName);
+
         protected abstract Task ImportCoreAsync(string fileName);
 
         private void ValidateFileName(string fileName)

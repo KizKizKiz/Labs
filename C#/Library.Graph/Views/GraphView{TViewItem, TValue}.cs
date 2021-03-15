@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Library.Views
+namespace Library.Graph.Views
 {
     public abstract class GraphView<TViewItem, TValue> : IGraphView<TViewItem, TValue>
-        where TValue : IEquatable<TValue>, IComparable<TValue>
+        where TValue : IEquatable<TValue>
         where TViewItem : IGraphViewItem<TValue>
     {
         public IReadOnlyList<TViewItem> Items { get; }

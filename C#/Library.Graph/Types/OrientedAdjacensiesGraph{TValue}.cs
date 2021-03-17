@@ -42,7 +42,7 @@ namespace Library.Graph.Types
         /// <param name="vertices">Количество вершин.</param>
         /// <param name="meanCohesionPower">Средняя степень вершин.</param>
         /// <param name="factory">Фабрика элементов.</param>
-        public static OrientedAdjacensiesGraph<TValue> GenerateWithWeakCohesion(int vertices, int meanCohesionPower, Func<TValue> factory)
+        public static OrientedAdjacensiesGraph<TValue> GenerateWithStrongCohesion(int vertices, int meanCohesionPower, Func<TValue> factory)
         {
             InitializeVerticesSetAndMap(vertices, meanCohesionPower, factory);
             InitializeCoherentMapCore();
@@ -72,21 +72,29 @@ namespace Library.Graph.Types
 
             worksheet.Cells[1, 1].Value = "Source";
             worksheet.Cells[1, 2].Value = "Target";
-            worksheet.Cells[1, 4].Value = "Type";
-            worksheet.Cells[1, 5].Value = "Label";
+            worksheet.Cells[1, 3].Value = "Type";
+            worksheet.Cells[1, 4].Value = "Label";
 
             var edges = View.Items.Select(
-                c => c.Items.Select(
-                    v => new EdgeViewItem<TValue>(c.Vertex, v)))
+                c => c.Items.Select(v => new EdgeViewItem<TValue>(c.Vertex, v)))
                 .SelectMany(s => s)
                 .ToList();
 
-            for (int i = 0; i < edges.Count; i++)
+            var index = 0;
+            for (; index < edges.Count; index++)
             {
-                worksheet.Cells[i + 2, 1].Value = edges[i].First.ToString();
-                worksheet.Cells[i + 2, 2].Value = edges[i].Second.ToString();
-                worksheet.Cells[i + 2, 4].Value = EdgeType;
-                worksheet.Cells[i + 2, 5].Value = $"From '{edges[i].First}' to '{edges[i].Second}'";
+                worksheet.Cells[index + 2, 1].Value = edges[index].First.ToString();
+                worksheet.Cells[index + 2, 2].Value = edges[index].Second.ToString();
+                worksheet.Cells[index + 2, 3].Value = EdgeType;
+                worksheet.Cells[index + 2, 4].Value = $"From '{edges[index].First}' to '{edges[index].Second}'";
+            }
+
+            foreach (var item in View.Items.Where(c => !c.Items.Any()))
+            {
+                worksheet.Cells[index + 2, 1].Value = item.Vertex;
+                worksheet.Cells[index + 2, 3].Value = EdgeType;
+                worksheet.Cells[index + 2, 4].Value = $"From '{item.Vertex}' to 'NONE'";
+                index++;
             }
 
             await package.SaveAsync();
@@ -108,15 +116,29 @@ namespace Library.Graph.Types
             for (int i = 2; i <= worksheet.Dimension.End.Row; i++) // int i = 1 Skip headers
             {
                 var entity = new TValue();
-                var edge = new EdgeViewItem<TValue>(
-                    entity.ConvertFromString(worksheet.Cells[i, 1].Value.ToString()),
-                    entity.ConvertFromString(worksheet.Cells[i, 2].Value.ToString()));
+
+                var firstNode = entity.ConvertFromString(worksheet.Cells[i, 1].Value.ToString());
+
+                EdgeViewItem<TValue> edge;
+                if (worksheet.Cells[i, 2].Value is null)
+                {
+                    edge = new EdgeViewItem<TValue>(firstNode);
+                }
+                else
+                {
+                    edge = new EdgeViewItem<TValue>(firstNode, entity.ConvertFromString(worksheet.Cells[i, 2].Value.ToString()));
+                }
 
                 if (!mapVertexAndItems.ContainsKey(edge.First))
                 {
                     mapVertexAndItems.Add(edge.First, new List<TValue>());
+
+                    if (!edge.IsSecondDefault) 
+                    {
+                        mapVertexAndItems[edge.First].Add(edge.Second);
+                    }
                 }
-                else
+                else if (!edge.IsSecondDefault)
                 {
                     mapVertexAndItems[edge.First].Add(edge.Second);
                 }
@@ -132,9 +154,11 @@ namespace Library.Graph.Types
             _ = MapVertexAndLists
                 .Aggregate((f, s) =>
                 {
-                    s.Value.Items.Add(f.Key);
+                    f.Value.Items.Add(s.Key);
                     return s;
                 });
+            MapVertexAndLists.Last().Value.Items.Add(MapVertexAndLists.First().Key);
+
             foreach (var pair in MapVertexAndLists)
             {
                 _ = Enumerable
@@ -174,6 +198,10 @@ namespace Library.Graph.Types
                         {
                             var addedVertex = VerticesSet[RandomGenerator.Next(VerticesSet.Count)];
 
+                            if (addedVertex.Equals(skipVertex) && pair.Value.Items.Count == pair.Value.Count - 1)
+                            {
+                                break;
+                            }
                             if (!addedVertex.Equals(skipVertex) && !pair.Value.Items.Contains(addedVertex) && !addedVertex.Equals(pair.Key))
                             {
                                 _ = pair.Value.Items.Add(addedVertex);

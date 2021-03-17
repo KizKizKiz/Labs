@@ -92,7 +92,7 @@ namespace Library.Graph.Operations
                 if (maxElementsInComponent is -1 || maxElementsInComponent == item.Count)
                 {
                     maxElementsInComponent = item.Count;
-                    yield return item;
+                    yield return item.Reverse();
                 }
                 else
                 {

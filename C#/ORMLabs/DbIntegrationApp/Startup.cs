@@ -9,7 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Library.ORM;
+using Library.StorageProcessor;
+using Library.StorageProcessor.Model;
 
 namespace DbIntegrationApp
 {
@@ -26,7 +27,7 @@ namespace DbIntegrationApp
         {
             _ = Task.Run(() =>
             {
-                Application.Run(new TableViewer());
+                Application.Run(new TableViewer(_host.Services.GetService<ModelsContainer>()!));
 
                 //Стопаем приложение, т.к. приложение закрыто.
                 _hostApplication.StopApplication();
@@ -65,11 +66,18 @@ namespace DbIntegrationApp
 
         private static void ConfigureServices(IServiceCollection builder)
         {
-            //Должен быть первым
             builder.AddHostedService<Startup>();
 
-            builder.AddTransient<TableViewer>();
-            builder.AddDbContext<Context>((Microsoft.EntityFrameworkCore.DbContextOptionsBuilder builder) => builder.UseSqlServer)
+            builder.AddSingleton<ModelsContainer>();
+            builder.AddSingleton<IUnitOfWork<GoodType>, UnitOfWork<GoodType>>();
+            builder.AddSingleton<IUnitOfWork<Good>, UnitOfWork<Good>>();
+            builder.AddSingleton<IUnitOfWork<Provider>, UnitOfWork<Provider>>();
+            builder.AddSingleton<IUnitOfWork<GoodsProviders>, UnitOfWork<GoodsProviders>>();
+
+            builder.AddHostedService<BackgroundService<ModelsContainer>>();
+
+            builder.AddDbContext<Context>();
+
         }
         private static void ConfigureApp(IConfigurationBuilder builder)
         {

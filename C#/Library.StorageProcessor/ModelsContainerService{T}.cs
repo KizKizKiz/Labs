@@ -6,11 +6,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace Library.StorageProcessor
 {
-    public class BackgroundService<T> : IHostedService
+    public class ModelContainerService<T> : IHostedService
         where T : IHostedService
     {
-
-        public BackgroundService(T service)
+        public ModelContainerService(T service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }

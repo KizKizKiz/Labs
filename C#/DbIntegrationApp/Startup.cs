@@ -8,9 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
+
+using NHibernate;
+
 using Library.StorageProcessor;
-using Library.StorageProcessor.Model;
+using Library.Model;
+//using Library.StorageProcessor.EFAccessor;
+using Library.StorageProcessor.NHibernateAccessor;
 
 namespace DbIntegrationApp
 {
@@ -27,9 +31,13 @@ namespace DbIntegrationApp
         {
             _ = Task.Run(() =>
             {
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.EnableVisualStyles();
+                Application.ThreadException += (sen, info) => _logger.LogError(info.Exception, "Unhandled error occured. See info in details.");
+
                 Application.Run(new TableViewer(_host.Services.GetService<ModelsContainer>()!));
 
-                //Стопаем приложение, т.к. приложение закрыто.
+                //Стопаем сервисы, т.к. приложение закрыто.
                 _hostApplication.StopApplication();
             },
             cancellationToken);
@@ -69,14 +77,14 @@ namespace DbIntegrationApp
             builder.AddHostedService<Startup>();
 
             builder.AddSingleton<ModelsContainer>();
-            builder.AddSingleton<IUnitOfWork<GoodType>, UnitOfWork<GoodType>>();
-            builder.AddSingleton<IUnitOfWork<Good>, UnitOfWork<Good>>();
-            builder.AddSingleton<IUnitOfWork<Provider>, UnitOfWork<Provider>>();
-            builder.AddSingleton<IUnitOfWork<GoodsProviders>, UnitOfWork<GoodsProviders>>();
+            builder.AddSingleton<IRepository<GoodType>, Repository<GoodType>>();
+            builder.AddSingleton<IRepository<Good>, Repository<Good>>();
+            builder.AddSingleton<IRepository<Provider>, Repository<Provider>>();
+            builder.AddSingleton<IRepository<GoodProvider>, Repository<GoodProvider>>();
+            builder.AddSingleton<INHibernateLoggerFactory, LoggerFactoryAdapter>();
+            builder.AddHostedService<ModelContainerService<ModelsContainer>>();
 
-            builder.AddHostedService<BackgroundService<ModelsContainer>>();
-
-            builder.AddDbContext<Context>();
+            builder.AddSingleton<Context>();
 
         }
         private static void ConfigureApp(IConfigurationBuilder builder)

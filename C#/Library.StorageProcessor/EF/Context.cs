@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-using Library.StorageProcessor.Model;
+using Library.Model;
 
-namespace Library.StorageProcessor
+namespace Library.StorageProcessor.EFAccessor
 {
     public class Context : DbContext
     {
@@ -16,7 +16,7 @@ namespace Library.StorageProcessor
 
         public DbSet<Provider> Providers { get; private set; } = null!;
 
-        public DbSet<GoodsProviders> GoodsProviders { get; private set; } = null!;
+        public DbSet<GoodProvider> GoodsProviders { get; private set; } = null!;
 
         public Context(
             ILoggerFactory loggerFactory,
@@ -26,8 +26,6 @@ namespace Library.StorageProcessor
         {
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-
-            Database.OpenConnection();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -55,21 +53,24 @@ namespace Library.StorageProcessor
                 .ToTable("Providers")
                 .HasKey(g => g.ID);
 
-            modelBuilder.Entity<GoodsProviders>()
+            modelBuilder.Entity<GoodProvider>()
                 .ToTable("GoodsProviders")
                 .HasKey(g => g.ID);
 
             modelBuilder.Entity<GoodType>()
                 .HasMany(g => g.Goods)
-                .WithOne(t => t.GoodType);
+                .WithOne(t => t.GoodType)
+                .HasForeignKey(c => c.TypeId);
 
             modelBuilder.Entity<Good>()
                 .HasMany(g => g.GoodsProviders)
-                .WithOne(t => t.Good);
+                .WithOne(t => t.Good)
+                .HasForeignKey(c => c.GoodId);
 
             modelBuilder.Entity<Provider>()
                 .HasMany(g => g.GoodsProviders)
-                .WithOne(t => t.Provider);
+                .WithOne(t => t.Provider)
+                .HasForeignKey(c => c.ProviderId);
         }
 
         private readonly ILoggerFactory _loggerFactory;

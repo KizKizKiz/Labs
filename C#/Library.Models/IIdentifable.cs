@@ -1,4 +1,4 @@
-﻿namespace Library.StorageProcessor.Model
+﻿namespace Library.Model
 {
     public interface IIdentifable
     {

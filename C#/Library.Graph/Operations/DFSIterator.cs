@@ -12,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class DFSIterator<TValue> : IEnumerable<TValue>
-        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
+        where TValue : IStringConvertible<TValue>
     {
         public DFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {

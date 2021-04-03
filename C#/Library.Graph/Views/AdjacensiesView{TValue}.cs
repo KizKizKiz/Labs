@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace Library.Graph.Views
 {
-    public class OrientedAdjacensiesView<TValue> : GraphView<AdjacensyViewItem<TValue>, TValue>
-        where TValue : IEquatable<TValue>
+    public class AdjacensiesView<TValue> : GraphView<AdjacensyViewItem<TValue>, TValue>
+        where TValue: notnull
     {
-        public OrientedAdjacensiesView(IEnumerable<AdjacensyViewItem<TValue>> adjacensies)
-            : base(adjacensies)
+        public AdjacensiesView(IEnumerable<AdjacensyViewItem<TValue>> adjacensies, IEnumerable<TValue> vertices)
+            : base(adjacensies, vertices)
         {
             _mapVertexAndValues = adjacensies.ToDictionary(adj => adj.Vertex, adj => adj.Items);
         }

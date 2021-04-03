@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Library.Graph.Views
 {
@@ -7,12 +8,11 @@ namespace Library.Graph.Views
     /// </summary>
     /// <typeparam name="TViewItem">Тип представления ребер.</typeparam>
     /// <typeparam name="TValue">Тип элементов ребер.</typeparam>
-    public interface IGraphView<TViewItem, TValue> : IGraphView<TViewItem>
-        where TViewItem : IGraphViewItem<TValue>
+    public interface IGraphView<TValue>
     {
         /// <summary>
-        /// Возвращает множество вершин.
+        /// Возвращает элементы представления доступные только для чтения.
         /// </summary>
-        IReadOnlyList<TValue> Vertices { get; }
+        IReadOnlyList<TValue> Items { get; }
     }
 }

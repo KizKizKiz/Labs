@@ -9,23 +9,23 @@ using Library.Graph.ConvertibleTypes;
 
 namespace Library.Graph.Operations
 {
-   public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgeViewItemWithWeight<TValue>>
-        where TValue : IEquatable<TValue>, IStringConvertible<TValue>, new()
+   public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgeViewItem<TValue>>
+        where TValue : IStringConvertible<TValue>, new()
    {
        public MinimumSpanningTreeIterator(OrientedEdgeWithWeightGraph<TValue> graph)
        {
            _graph = graph ?? throw new ArgumentNullException(nameof(graph));
        }
 
-       public IEnumerator<EdgeViewItemWithWeight<TValue>> GetEnumerator()
+       public IEnumerator<EdgeViewItem<TValue>> GetEnumerator()
            => SetupIterator().GetEnumerator();
 
-       private IEnumerable<EdgeViewItemWithWeight<TValue>> SetupIterator()
+       private IEnumerable<EdgeViewItem<TValue>> SetupIterator()
        {
-           var pq = new MinPrimaryQueue<EdgeViewItemWithWeight<TValue>>(_graph.View.Items);
-           var uf = new UnionFindStructure<TValue>(_graph.Vertices);
+           var pq = new MinPrimaryQueue<EdgeViewItem<TValue>>(_graph.View.Items);
+           var uf = new UnionFindStructure<TValue>(_graph.View.Vertices);
            var mstCount = 0;
-           while (!pq.IsEmpty() && mstCount < _graph.Vertices.Count - 1)
+           while (!pq.IsEmpty() && mstCount < _graph.View.Vertices.Count - 1)
            {
                var edge = pq.DeleteMin();
                var v = edge.First;

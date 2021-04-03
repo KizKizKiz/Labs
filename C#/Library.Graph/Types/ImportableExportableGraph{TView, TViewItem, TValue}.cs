@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Library.Graph.ConvertibleTypes;
+
+using Library.Graph.Generators;
+using Library.Graph.ImportersExporters;
 using Library.Graph.Views;
 
 namespace Library.Graph.Types
@@ -11,57 +13,42 @@ namespace Library.Graph.Types
     /// <typeparam name="TView">Тип представления графа.</typeparam>
     /// <typeparam name="TViewItem">Тип представления элемента графа.</typeparam>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
-    public abstract class ImportableExportableGraph<TView, TViewItem, TValue> : Graph<TView, TViewItem, TValue>, IFileExporterImporter
+    public abstract class ImportableExportableGraph<TView, TViewItem, TValue> : Graph<TView, TViewItem, TValue>
         where TViewItem : IGraphViewItem<TValue>
         where TView : IGraphView<TViewItem, TValue>
-        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
+        where TValue : notnull
     {
-        /// <summary>
-        /// Конструктор графа.
-        /// </summary>
-        /// <param name="edgeType">Тип ребер графа.</param>
-        public ImportableExportableGraph(EdgeType edgeType)
-            : base(edgeType) { }
-
         /// <summary>
         /// Конструктор графа.
         /// </summary>
         /// <param name="view">Контракт представления графа.</param>
         /// <param name="edgeType">Тип ребер графа.</param>
-        public ImportableExportableGraph(TView view, EdgeType edgeType)
-            : base(view, edgeType)
+        public ImportableExportableGraph(TView view)
+            : base(view)
+        { }
+
+        public ImportableExportableGraph(ViewGeneratingResult<TView, TViewItem, TValue> viewGeneratingResult)
+            : base(viewGeneratingResult)
         { }
 
         /// <inheritdoc/>
-        public async Task<string> ExportAsync()
+        public async Task ExportAsync(IGraphExporter exporter)
         {
-            var fileName = $"graph-dump-{DateTime.Now.ToString("HH-mm-ss")}.xlsx";
-
-            return await ExportCoreAsync(fileName);
+            if (exporter is null)
+            {
+                throw new ArgumentNullException(nameof(exporter));
+            }
+            await exporter.ExportAsync<TView, TViewItem, TValue>(View ?? throw new ArgumentNullException(nameof(exporter)));
         }
 
         /// <inheritdoc/>
-        public async Task ImportAsync(string fileName)
+        public async Task ImportAsync(IGraphViewImporter importer)
         {
-            ValidateFileName(fileName);
-
-            await ImportCoreAsync(fileName);
-        }
-
-        protected abstract Task<string> ExportCoreAsync(string fileName);
-
-        protected abstract Task ImportCoreAsync(string fileName);
-
-        private void ValidateFileName(string fileName)
-        {
-            if (fileName is null)
+            if (importer is null)
             {
-                throw new ArgumentNullException(nameof(fileName));
+                throw new ArgumentNullException(nameof(importer));
             }
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                throw new ArgumentException("File name cannot be empty or has only whitespaces.", nameof(fileName));
-            }
+            View = await importer.ImportAsync<TView, TViewItem, TValue>();
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Library.Graph
             SwapByIndexies(1, _count--);
             Correct(1);
 
-            _items[_count + 1] = default;
+            _items[_count + 1] = default!;
 
             return min;
         }

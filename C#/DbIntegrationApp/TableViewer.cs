@@ -72,16 +72,28 @@ namespace DbIntegrationApp
             switch (_tableTabs.SelectedTab.Name)
             {
                 case "_goodsTab":
-                    await _container.GoodsRepository.RemoveAsync(GiveMessageOrSelected<Good>(_goodsTable));
+                    if (GiveMessageOrSelected<Good>(_goodsTable) is Good item)
+                    {
+                        await _container.GoodsRepository.RemoveAsync(item);
+                    }
                     break;
                 case "_goodTypesTab":
-                    await _container.GoodTypesRepository.RemoveAsync(GiveMessageOrSelected<GoodType>(_typesTable));
+                    if (GiveMessageOrSelected<GoodType>(_typesTable) is GoodType goodType)
+                    {
+                        await _container.GoodTypesRepository.RemoveAsync(goodType);
+                    }
                     break;
                 case "_providersTab":
-                    await _container.ProvidersRepository.RemoveAsync(GiveMessageOrSelected<Provider>(_providersTable));
+                    if (GiveMessageOrSelected<Provider>(_providersTable) is Provider provider)
+                    {
+                        await _container.ProvidersRepository.RemoveAsync(provider);
+                    }
                     break;
                 case "_goodsAndProvidersTab":
-                    await _container.GoodsProvidersRepository.RemoveAsync(GiveMessageOrSelected<GoodProvider>(_goodsProvidersTable));
+                    if (GiveMessageOrSelected<GoodProvider>(_goodsProvidersTable) is GoodProvider goodProvider)
+                    {
+                        await _container.GoodsProvidersRepository.RemoveAsync(goodProvider);
+                    }
                     break;
                 default:
                     throw new InvalidOperationException($"Invoked add on not registered tab (Name: {_tableTabs.SelectedTab.Name}).");
@@ -89,12 +101,13 @@ namespace DbIntegrationApp
             await TableLoadingAsync();
         }
 
-        private T GiveMessageOrSelected<T>(DataGridView dwg)
-            where T: class
+        private T? GiveMessageOrSelected<T>(DataGridView dwg)
+            where T : class
         {
             if (dwg.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Cannot remove item cause it is not selected.", Text, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return null;
             }
             return dwg.SelectedRows[0].DataBoundItem as T ?? throw new InvalidOperationException("Passed type doesn't belong to data grid source type.");
         }

@@ -15,7 +15,8 @@ namespace Library.StorageProcessor.NHibernateAccessor
             Map(c => c.TelNumber).Length(11).Not.Nullable();
 
             Table("Providers");
-            HasMany(c => c.GoodsProviders).Inverse().Cascade.All().KeyColumn(nameof(GoodProvider.ProviderId)).Not.LazyLoad();
+
+            HasMany(c => c.GoodsProviders).Inverse().Cascade.AllDeleteOrphan().KeyColumn(nameof(GoodProvider.ProviderId)).Not.LazyLoad();
         }
     }
 
@@ -29,7 +30,7 @@ namespace Library.StorageProcessor.NHibernateAccessor
 
             Table("Types");
 
-            HasMany(c => c.Goods).Inverse().Cascade.All().KeyColumn(nameof(Good.TypeId)).Not.LazyLoad();
+            HasMany(c => c.Goods).Inverse().Cascade.AllDeleteOrphan().KeyColumn(nameof(Good.TypeId)).Not.LazyLoad();
         }
     }
 
@@ -48,7 +49,7 @@ namespace Library.StorageProcessor.NHibernateAccessor
             Table("Goods");
 
             References(c => c.GoodType).Column(nameof(Good.TypeId)).Not.LazyLoad();
-            HasMany(c => c.GoodsProviders).Inverse().Cascade.All().KeyColumn(nameof(GoodProvider.GoodId)).Not.LazyLoad();
+            HasMany(c => c.GoodsProviders).Inverse().Cascade.AllDeleteOrphan().KeyColumn(nameof(GoodProvider.GoodId)).Not.LazyLoad();
         }
     }
 

@@ -13,8 +13,8 @@ using NHibernate;
 
 using Library.StorageProcessor;
 using Library.Model;
-//using Library.StorageProcessor.EFAccessor;
-using Library.StorageProcessor.NHibernateAccessor;
+using Library.StorageProcessor.EFAccessor;
+//using Library.StorageProcessor.NHibernateAccessor;
 
 namespace DbIntegrationApp
 {

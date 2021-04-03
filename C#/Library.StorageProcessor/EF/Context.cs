@@ -20,9 +20,8 @@ namespace Library.StorageProcessor.EFAccessor
 
         public Context(
             ILoggerFactory loggerFactory,
-            IConfiguration configuration,
-            DbContextOptions<Context> options)
-            :base(options)
+            IConfiguration configuration)
+            :base()
         {
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));

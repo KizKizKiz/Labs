@@ -81,8 +81,8 @@ namespace Library.StorageProcessor.NHibernateAccessor
             transaction.Begin();
             try
             {
+                await _context.CurrentSession.EvictAsync(entity, token).ConfigureAwait(false);
                 await _context.CurrentSession.DeleteAsync(entity, token).ConfigureAwait(false);
-
                 await _context.CurrentSession.FlushAsync(token).ConfigureAwait(false);
                 await transaction.CommitAsync(token).ConfigureAwait(false);
             }

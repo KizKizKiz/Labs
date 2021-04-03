@@ -1,6 +1,7 @@
 using System;
 
 using Library.Graph.ConvertibleTypes;
+using Library.Graph.Generators;
 using Library.Graph.Views;
 
 namespace Library.Graph.Types
@@ -9,28 +10,20 @@ namespace Library.Graph.Types
     /// Представляет базовую реализацию всех типов графов, основанных на массивах ребер.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
-    public abstract class EdgeWithWeightGraph<TValue> : ImportableExportableGraph<EdgesWithWeightView<TValue>, EdgeViewItemWithWeight<TValue>, TValue>
-        where TValue : IEquatable<TValue>, IStringConvertible<TValue>
+    public abstract class EdgeWithWeightGraph<TValue> : ImportableExportableGraph<EdgesWithWeightView<TValue>, EdgeViewItem<TValue>, TValue>
+        where TValue : IStringConvertible<TValue>
     {
-        /// <summary>
-        /// Конструктор графа.
-        /// </summary>
-        /// <param name="edgeType">Тип ребер графа.</param>
-        public EdgeWithWeightGraph(EdgeType edgeType)
-            : base(edgeType) { }
-
         /// <summary>
         /// Конструктор графа.
         /// </summary>
         /// <param name="view">Представление графа на основе ребер.</param>
         /// <param name="edgeType">Тип ребер графа.</param>
-        public EdgeWithWeightGraph(EdgesWithWeightView<TValue> view, EdgeType edgeType)
-            : base(view, edgeType)
+        public EdgeWithWeightGraph(EdgesWithWeightView<TValue> view)
+            : base(view)
         { }
 
-        protected static double GenerateWeight() 
-            => RandomGenerator.Next(RANGE.MIN_WEIGHT, RANGE.MAX_WEIGHT);
-
-        private static (int MIN_WEIGHT, int MAX_WEIGHT) RANGE = (-100, 100);
+        public EdgeWithWeightGraph(ViewGeneratingResult<EdgesWithWeightView<TValue>, EdgeViewItem<TValue>, TValue> viewGeneratingResult)
+            : base(viewGeneratingResult)
+        { }
     }
 }

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Graph", "Console.Graph\Console.Graph.csproj", "{68BEAEF0-FED6-42CD-840D-6A248745709D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Graph", "Library.Graph\Library.Graph.csproj", "{577E6C94-2C05-490A-AA51-F26C19C39AB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Graph", "Library.Graph\Library.Graph.csproj", "{577E6C94-2C05-490A-AA51-F26C19C39AB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

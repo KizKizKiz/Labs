@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Library.Graph.Views
@@ -8,17 +9,18 @@ namespace Library.Graph.Views
     /// Представляет элемент представления в виде списка смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов.</typeparam>
-    public readonly struct AdjacensyViewItem<TValue> : IGraphViewItem<TValue>
-        where TValue : IEquatable<TValue>
+    public sealed class AdjacensyViewItem<TValue> : IGraphViewItem<TValue>
     {
         /// <summary>
         /// Возвращает вершину списка смежности.
         /// </summary>
+        [NotNull]
         public TValue Vertex { get; }
 
         /// <summary>
         /// Возвращает список вершин смежных с <see cref="Vertex"/>.
         /// </summary>
+        [NotNull]
         public IReadOnlyList<TValue> Items { get; }
 
         /// <summary>

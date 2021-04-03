@@ -5,7 +5,7 @@ using System.Linq;
 namespace Library.Graph
 {
     public class UnionFindStructure<TValue>
-        where TValue : IEquatable<TValue>
+        where TValue : notnull
     {
         public UnionFindStructure(IEnumerable<TValue> elements)
         {

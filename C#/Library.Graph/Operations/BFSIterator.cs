@@ -13,7 +13,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class BFSIterator<TValue> : IEnumerable<TValue>
-         where TValue : IEquatable<TValue>, IStringConvertible<TValue>
+         where TValue : IStringConvertible<TValue>
     {
         public BFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {

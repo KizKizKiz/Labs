@@ -7,9 +7,11 @@ using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-using Library.Graph.Types;
-using Library.Graph.Extensions;
-using Library.Graph.ConvertibleTypes;
+using System.Collections.Generic;
+
+using Library.Graph.Generators;
+using Library.Graph.Generators.Options;
+using Library.Graph.Views;
 
 namespace Console.Graph
 {
@@ -17,42 +19,23 @@ namespace Console.Graph
     {
         static async Task Main(string[] args)
         {
-            var fileName = await GenerateAndExportGraph();
 
-            var graph = new OrientedAdjacensiesGraph<IntConvertible>();
-            await graph.ImportAsync(fileName);
+            //var ll = new List<List<int>>();
+            //ll[0] = new List<int>() { 1, 2, 3, 4 };
 
-            foreach (var seq in graph.View.Items)
-            {
-                System.Console.WriteLine(seq);
-            }
-            System.Console.WriteLine("\n'Strongly connected components' iterator output:");
-            var index = 1;
-            foreach (var item in graph.SetupSCCWalking())
-            {
-                System.Console.WriteLine(string.Join(" -> ", item));
-                DumpToCSV(item, $"SCC_{index}({fileName})");
-            }
+            //new OrientedViewGenerator<AdjacensiesView<Exception>, AdjacensyViewItem<Exception>, Exception>(
+            //    new OrientedViewGeneratorOptions<AdjacensiesView<Exception>, AdjacensyViewItem<Exception>, Exception>(5, 5, null!, ConnectivityType.NotConnected));
+
+            //new OrientedViewGenerator<EdgesWithWeightView<Exception>, EdgeViewItem<Exception>, Exception>(
+            //    new OrientedViewGeneratorOptions<EdgesWithWeightView<Exception>, EdgeViewItem<Exception>, Exception>(5, 5, null!, ConnectivityType.NotConnected));
         }
 
-        public static void DumpToCSV<T>(IEnumerable<T> source, string fileName)
-        {
-            using StreamWriter streamReader = new StreamWriter(new FileStream(fileName, FileMode.Create));
-            using CsvWriter writer = new CsvWriter(streamReader, new CsvConfiguration(CultureInfo.CurrentCulture)
-            {
-                Delimiter = ","
-            });
-            writer.WriteRecords(source);
+        //private static async Task<string> GenerateAndExportGraph()
+        //{
+        //    var graph = OrientedAdjacensiesGraph<IntConvertible>.GenerateWithWeakCohesion(4, 2, () => new IntConvertible(_rnd.Next(0, 30)));
 
-            System.Console.WriteLine($"\nDumped successfully to '{fileName}'.");
-        }
-
-        private static async Task<string> GenerateAndExportGraph()
-        {
-            var graph = OrientedAdjacensiesGraph<IntConvertible>.GenerateInCoherent(7, 3, () => new IntConvertible(_rnd.Next(0, 30)));
-
-            return await graph.ExportAsync();
-        }
+        //    return await graph.ExportAsync();
+        //}
 
         private static Random _rnd = new Random();
     }

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="GoodNewItemOrUpdateView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GoodsProvidersNewItemOrUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ProviderNewItemOrUpdateView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TableViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TypeNewItemOrUpdateView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

@@ -3,9 +3,7 @@ using System;
 
 namespace Library.Graph.Generators.Options
 {
-    public abstract class GeneratorViewOptions<TView, TViewItem, TValue>
-        where TView: IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public abstract class GeneratorViewOptions<TValue>
     {
         public int VerticesCount { get; }
 
@@ -14,8 +12,8 @@ namespace Library.Graph.Generators.Options
         public Func<TValue> VerticiesFactory { get; }
 
         public GeneratorViewOptions(
-            int verticesCount, 
-            int meanConnectivity, 
+            int verticesCount,
+            int meanConnectivity,
             Func<TValue> factory)
         {
             if (verticesCount <= 0)

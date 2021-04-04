@@ -22,7 +22,7 @@ namespace Library.Graph.Types
             : base(view)
         { }
 
-        public EdgeWithWeightGraph(ViewGeneratingResult<EdgesWithWeightView<TValue>, EdgeViewItem<TValue>, TValue> viewGeneratingResult)
+        public EdgeWithWeightGraph(ViewGeneratingResult<TValue> viewGeneratingResult)
             : base(viewGeneratingResult)
         { }
     }

@@ -5,17 +5,15 @@ using Library.Graph.Generators.Options;
 
 namespace Library.Graph.Generators
 {
-    public sealed class TransportNetworkViewGenerator<TView, TViewItem, TValue> : GraphViewGenerator<TView, TViewItem, TValue>
-        where TView : IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public sealed class TransportNetworkViewGenerator<TValue> : GraphViewGenerator<TValue>
         where TValue : notnull
     {
-        public TransportNetworkViewGenerator(TransportNetworkViewGeneratorOptions<TView, TViewItem, TValue> options)
+        public TransportNetworkViewGenerator(TransportNetworkViewGeneratorOptions<TValue> options)
             : base(options)
         {
         }
 
-        protected override ViewGeneratingResult<TView, TViewItem, TValue> BuildCore()
+        protected override ViewGeneratingResult<TValue> BuildCore()
         {
             throw new NotImplementedException();
         }

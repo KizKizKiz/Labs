@@ -4,9 +4,7 @@ using System.ComponentModel;
 
 namespace Library.Graph.Generators.Options
 {
-    public sealed class OrientedViewGeneratorOptions<TView, TViewItem, TValue> : GeneratorViewOptions<TView, TViewItem, TValue>
-        where TView : IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public sealed class OrientedViewGeneratorOptions<TValue> : GeneratorViewOptions<TValue>
     {
         public ConnectivityType Connectivity { get; }
 

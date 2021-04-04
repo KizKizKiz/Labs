@@ -1,11 +1,8 @@
-﻿using Library.Graph.Views;
-using System;
+﻿using System;
 
 namespace Library.Graph.Generators.Options
 {
-    public sealed class TransportNetworkViewGeneratorOptions<TView, TViewItem, TValue> : GeneratorViewOptions<TView, TViewItem, TValue>
-        where TView : IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public sealed class TransportNetworkViewGeneratorOptions<TValue> : GeneratorViewOptions<TValue>
     {
         public int SourceOutVertices { get; }
 

@@ -20,7 +20,7 @@ namespace Library.Graph.Types
             : base(view)
         { }
 
-        public OrientedEdgeWithWeightGraph(ViewGeneratingResult<EdgesWithWeightView<TValue>, EdgeViewItem<TValue>, TValue> viewGeneratingResult)
+        public OrientedEdgeWithWeightGraph(ViewGeneratingResult<TValue> viewGeneratingResult)
             : base(viewGeneratingResult)
         { }
         //private static void InitializeCoherentMapCore()

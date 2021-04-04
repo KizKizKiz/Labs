@@ -13,7 +13,7 @@ namespace Library.Graph.Generators
         where TViewItem : IGraphViewItem<TValue>
         where TValue : notnull
     {
-        public GraphViewGenerator(GeneratorViewOptions<TView, TViewItem, TValue> options)
+        public GraphViewGenerator(GeneratorViewOptions<TValue> options)
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
         }
@@ -24,7 +24,7 @@ namespace Library.Graph.Generators
             return BuildCore();
         }
 
-        protected GeneratorViewOptions<TView, TViewItem, TValue> Options { get; }
+        protected GeneratorViewOptions<TValue> Options { get; }
 
         protected Dictionary<TValue, (int Count, HashSet<TValue> Items)> MapVertexAndLists { get; } = new();
 
@@ -34,7 +34,7 @@ namespace Library.Graph.Generators
 
         protected virtual void Initialize()
         {
-            while (MapVertexAndLists.Count != Options.VerticesCount) 
+            while (MapVertexAndLists.Count != Options.VerticesCount)
             {
                 var vertex = Options.VerticiesFactory();
                 if (MapVertexAndLists.ContainsKey(vertex))

@@ -1,23 +1,32 @@
-﻿using System;
-
+﻿
 using Library.Graph.Views;
 using Library.Graph.Generators.Options;
+using System.Collections.Generic;
 
 namespace Library.Graph.Generators
 {
-    public sealed class UnorientedViewGenerator<TView, TViewItem, TValue> : GraphViewGenerator<TView, TViewItem, TValue>
-        where TView : IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public class UnorientedViewGenerator<TValue> : GraphViewGenerator<TValue>
         where TValue : notnull
-        {
-        public UnorientedViewGenerator(UnorientedViewGeneratorOptions<TView, TViewItem, TValue> options)
-            : base(options)
-        {
-        }
+    {
+        public UnorientedViewGenerator(UnorientedViewGeneratorOptions<TValue> orientedView)
+            : base(orientedView)
+        { }
 
-        protected override ViewGeneratingResult<TView, TViewItem, TValue> BuildCore()
+        protected override ViewGeneratingResult<TValue> BuildCore()
         {
-            throw new NotImplementedException();
+            var options = (UnorientedViewGeneratorOptions<TValue>)Options;
+
+            IEnumerable<AdjacensyViewItem<TValue>> items = null!;
+            if (options.IsConnected)
+            {
+
+            }
+            else
+            {
+
+            }
+            return ViewGeneratingResult<TValue>.Create(
+                new AdjacensiesView<TValue>(items, MapVertexAndLists.Keys));
         }
     }
 }

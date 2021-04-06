@@ -27,14 +27,5 @@ namespace Library.Graph.Types
         {
             View = view ?? throw new ArgumentNullException(nameof(view));
         }
-
-        public Graph(ViewGeneratingResult<TView, TViewItem, TValue> viewGeneratingResult)
-        {
-            if (viewGeneratingResult is null)
-            {
-                throw new ArgumentNullException(nameof(viewGeneratingResult));
-            }
-            View = viewGeneratingResult.View;
-        }
     }
 }

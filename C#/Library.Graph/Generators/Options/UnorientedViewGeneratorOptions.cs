@@ -1,5 +1,4 @@
-﻿using Library.Graph.Views;
-using System;
+﻿using System;
 
 namespace Library.Graph.Generators.Options
 {
@@ -12,7 +11,7 @@ namespace Library.Graph.Generators.Options
             int meanCohesion,
             Func<TValue> factory,
             bool isConnected = true)
-            :base(verticesCount, meanCohesion, factory)
+            : base(verticesCount, meanCohesion, factory)
         {
             IsConnected = isConnected;
         }

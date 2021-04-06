@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types;
+using Library.Graph.Types.Adjacensies;
 
 namespace Library.Graph.Operations
 {
@@ -12,7 +13,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class DFSIterator<TValue> : IEnumerable<TValue>
-        where TValue : IStringConvertible<TValue>
+        where TValue : IStringConvertible<TValue>, new()
     {
         public DFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {

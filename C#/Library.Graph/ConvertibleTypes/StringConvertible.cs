@@ -6,9 +6,12 @@ namespace Library.Graph.ConvertibleTypes
     {
         public string Entity { get; private set; }
 
+        public bool IsNotDefaultValue { get; }
+
         public StringConvertible(string entity)
         {
             Entity = entity;
+            IsNotDefaultValue = true;
         }
         public StringConvertible ConvertFromString(string entity)
         {

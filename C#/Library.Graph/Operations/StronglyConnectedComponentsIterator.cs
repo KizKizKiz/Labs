@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types;
+using Library.Graph.Types.Adjacensies;
 
 namespace Library.Graph.Operations
 {

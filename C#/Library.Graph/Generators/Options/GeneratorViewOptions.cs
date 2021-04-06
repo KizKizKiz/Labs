@@ -1,5 +1,4 @@
-﻿using Library.Graph.Views;
-using System;
+﻿using System;
 
 namespace Library.Graph.Generators.Options
 {
@@ -20,9 +19,9 @@ namespace Library.Graph.Generators.Options
             {
                 throw new ArgumentException("Vertices count must be greater than zero.", nameof(verticesCount));
             }
-            if (meanConnectivity <= 0 || verticesCount < meanConnectivity)
+            if (meanConnectivity <= 0 || verticesCount <= meanConnectivity)
             {
-                throw new ArgumentException($"Mean connectivity must be greater than zero and equal or less than {nameof(verticesCount)}.", nameof(meanConnectivity));
+                throw new ArgumentException($"Mean connectivity must be greater than zero and less than {nameof(verticesCount)}.", nameof(meanConnectivity));
             }
             VerticesCount = verticesCount;
             MeanConnectivity = meanConnectivity;

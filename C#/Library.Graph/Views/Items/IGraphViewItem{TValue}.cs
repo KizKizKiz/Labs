@@ -7,7 +7,6 @@ namespace Library.Graph.Views
     /// </summary>
     /// <typeparam name="TView">Тип представления графа.</typeparam>
     public interface IGraphViewItem<TValue>
-
     {
     }
 }

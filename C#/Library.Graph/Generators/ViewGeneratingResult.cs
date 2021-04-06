@@ -5,14 +5,12 @@ using Library.Graph.Views;
 
 namespace Library.Graph.Generators
 {
-    public abstract class ViewGeneratingResult<TView, TViewItem, TValue>
-        where TView : IGraphView<TViewItem, TValue>
-        where TViewItem : IGraphViewItem<TValue>
+    public sealed class ViewGeneratingResult<TValue>
         where TValue : notnull
     {
-        public TView View { get; }
+        public AdjacensiesView<TValue> View { get; }
 
-        public ViewGeneratingResult(TView view)
+        public ViewGeneratingResult(AdjacensiesView<TValue> view)
         {
             if (view is null)
             {

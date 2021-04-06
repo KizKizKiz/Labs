@@ -44,7 +44,7 @@ namespace Library.Graph.Views
             {
                 return $"{Vertex} : {string.Join(" , ", Items)}";
             }
-            return $"{Vertex} : Empty";
+            return $"{Vertex} : none";
         }
     }
 }

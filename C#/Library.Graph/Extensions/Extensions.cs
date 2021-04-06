@@ -5,6 +5,8 @@ using Library.Graph.ConvertibleTypes;
 using Library.Graph.Types;
 using Library.Graph.Operations;
 using Library.Graph.Views;
+using Library.Graph.Types.Adjacensies;
+using Library.Graph.Types.Edges;
 
 namespace Library.Graph.Extensions
 {
@@ -12,7 +14,7 @@ namespace Library.Graph.Extensions
     {
         public static IEnumerable<TValue> SetupBFSWalking<TValue>(
             this UnorientedAdjacensiesGraph<TValue> graph)
-            where TValue: IStringConvertible<TValue>
+            where TValue: IStringConvertible<TValue>, new()
         {
             if (graph is null)
             {
@@ -23,7 +25,7 @@ namespace Library.Graph.Extensions
 
         public static IEnumerable<TValue> SetupDFSWalking<TValue>(
             this UnorientedAdjacensiesGraph<TValue> graph)
-            where TValue : IStringConvertible<TValue>
+            where TValue : IStringConvertible<TValue>, new()
         {
             if (graph is null)
             {
@@ -32,8 +34,8 @@ namespace Library.Graph.Extensions
             return new DFSIterator<TValue>(graph);
         }
 
-        public static IEnumerable<EdgeViewItem<TValue>> SetupMSTWalking<TValue>(
-            this OrientedEdgeWithWeightGraph<TValue> graph)
+        public static IEnumerable<EdgesViewItem<TValue>> SetupMSTWalking<TValue>(
+            this OrientedEdgesGraph<TValue> graph)
             where TValue : IStringConvertible<TValue>, new()
         {
             if (graph is null)

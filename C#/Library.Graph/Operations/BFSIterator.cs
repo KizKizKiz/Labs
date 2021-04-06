@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types;
+using Library.Graph.Types.Adjacensies;
 
 namespace Library.Graph.Operations
 {
@@ -13,7 +13,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class BFSIterator<TValue> : IEnumerable<TValue>
-         where TValue : IStringConvertible<TValue>
+         where TValue : IStringConvertible<TValue>, new()
     {
         public BFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
         {
@@ -35,9 +35,6 @@ namespace Library.Graph.Operations
                 .ToDictionary(
                     item => item.Vertex,
                     item => item.Items);
-
-            _mapVertexAndIsMarked = _mapVertexItems
-                .ToDictionary(v => v.Key, _ => false);
         }
 
         /// <summary>
@@ -72,7 +69,6 @@ namespace Library.Graph.Operations
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly Dictionary<TValue, bool> _mapVertexAndIsMarked = new Dictionary<TValue, bool>();
         private readonly Dictionary<TValue, IReadOnlyList<TValue>> _mapVertexItems = new Dictionary<TValue, IReadOnlyList<TValue>>();
     }
 }

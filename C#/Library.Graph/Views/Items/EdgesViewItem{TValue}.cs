@@ -7,24 +7,27 @@ namespace Library.Graph.Views
     /// Представляет элемент представления в виде списка смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов ребра.</typeparam>
-    public sealed class EdgeViewItem<TValue> : IEdgeViewItem<TValue>, IEquatable<EdgeViewItem<TValue>>, IComparable<EdgeViewItem<TValue>>
+    public sealed class EdgesViewItem<TValue> : IGraphViewItem<TValue>, IEquatable<EdgesViewItem<TValue>>, IComparable<EdgesViewItem<TValue>>
     {
         [NotNull]
         public TValue First { get; }
 
-        [NotNull]
-        public TValue Second { get; }
+        public TValue? Second { get; }
 
         public double? Weight { get; }
 
-        public EdgeViewItem(TValue first, TValue second)
+        public EdgesViewItem(TValue first)
+        {
+            First = first ?? throw new ArgumentNullException(nameof(first));
+        }
+
+        public EdgesViewItem(TValue first, TValue second)
         {
             First = first ?? throw new ArgumentNullException(nameof(first));
             Second = second ?? throw new ArgumentNullException(nameof(second));
-            Weight = null;
         }
 
-        public EdgeViewItem(TValue first, TValue second, double weight)
+        public EdgesViewItem(TValue first, TValue second, double weight)
             :this(first, second)
         {
             Weight = weight;
@@ -35,7 +38,7 @@ namespace Library.Graph.Views
             return HashCode.Combine(First, Second, Weight);
         }
 
-        public int CompareTo(EdgeViewItem<TValue>? other)
+        public int CompareTo(EdgesViewItem<TValue>? other)
         {
             if (other is null)
             {
@@ -51,11 +54,12 @@ namespace Library.Graph.Views
             }
             return 0;
         }
+
         public override string ToString()
             => $"{First} -> {Second} ({(Weight.HasValue ? Weight.Value : "None")})";
         
 
-        public bool Equals(EdgeViewItem<TValue>? y)
-            => y is not null && First.Equals(y.First) && Second.Equals(y.Second) && Weight == y.Weight;
+        public bool Equals(EdgesViewItem<TValue>? y)
+            => y is not null && First.Equals(y.First) && Second is not null && Second.Equals(y.Second) && Weight == y.Weight;
     }
 }

@@ -6,26 +6,26 @@ namespace Library.Graph.Generators.Options
     {
         public int SourceOutVertices { get; }
 
-        public int TargetInVertices { get; }
+        public int TargetMinInVertices { get; }
 
         public TransportNetworkViewGeneratorOptions(
-            int verticesCountWithOutSourceAndTarget,
+            int verticesCount,
             int meanCohesion,
             Func<TValue> factory,
             int sourceOutVertices,
-            int targetInVertices)
-            : base(verticesCountWithOutSourceAndTarget, meanCohesion, factory)
+            int targetMinInVertices)
+            : base(verticesCount, meanCohesion, factory)
         {
-            if (sourceOutVertices <= 0)
+            if (sourceOutVertices <= 0 && sourceOutVertices >= verticesCount)
             {
-                throw new ArgumentException("The number of output vertices from 'SOURCE' must be greater than zero and equal or less than vertices count .", nameof(sourceOutVertices));
+                throw new ArgumentException("The number of output vertices from 'SOURCE' must be greater than zero and less than vertices count.", nameof(sourceOutVertices));
             }
-            if (targetInVertices <= 0)
+            if (targetMinInVertices <= 0 && targetMinInVertices >= verticesCount)
             {
-                throw new ArgumentException("The number of input vertices to 'TARGET' must be greater than zero and equal or less than vertices count .", nameof(targetInVertices));
+                throw new ArgumentException("The number of input vertices to 'TARGET' must be greater than zero and less than vertices count.", nameof(targetMinInVertices));
             }
             SourceOutVertices = sourceOutVertices;
-            TargetInVertices = targetInVertices;
+            TargetMinInVertices = targetMinInVertices;
         }
     }
 }

@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types.Adjacensies;
+using Library.Graph.Types;
 
 namespace Library.Graph.Operations
 {
@@ -13,24 +12,19 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class BFSIterator<TValue> : IEnumerable<TValue>
-         where TValue : IStringConvertible<TValue>, new()
+         where TValue : notnull, new()
     {
-        public BFSIterator(UnorientedAdjacensiesGraph<TValue> graph)
+        public BFSIterator(AdjacensiesBasedGraph<TValue> graph)
         {
             if (graph is null)
             {
                 throw new ArgumentNullException(nameof(graph));
             }
-            if (graph.View is null)
-            {
-                throw new ArgumentException("The view is null.");
-            }
-            if (!graph.View.Items.Any())
+            if (!graph.Items.Any())
             {
                 throw new ArgumentException("The graph is empty.");
             }
             _mapVertexItems = graph
-                .View
                 .Items
                 .ToDictionary(
                     item => item.Vertex,

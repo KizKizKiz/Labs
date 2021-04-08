@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types.Adjacensies;
+using Library.Graph.Types;
 
 namespace Library.Graph.Operations
 {
@@ -13,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class StronglyConnectedComponentsIterator<TValue> : IEnumerable<IEnumerable<TValue>>
-        where TValue : IStringConvertible<TValue>, new()
+        where TValue : notnull, new()
     {
         private class StronglyConnectedComponentItem
         {
@@ -58,11 +57,20 @@ namespace Library.Graph.Operations
             private readonly Queue<TValue> _components = new Queue<TValue>();
         }
 
-        public StronglyConnectedComponentsIterator(OrientedAdjacensiesGraph<TValue> graph)
+        public StronglyConnectedComponentsIterator(AdjacensiesBasedGraph<TValue> graph)
         {
-            _graph = graph ?? throw new ArgumentNullException(nameof(graph));
+            if (graph is null)
+            {
+                throw new ArgumentNullException(nameof(graph));
+            }
+            if (!graph.IsOriented)
+            {
+                throw new ArgumentException("The algorithm support adjacensies based 'oriented' graph.", nameof(graph));
+            }
+            _graph = graph;
 
-            _mapVertexAndItem = _graph.View.Items
+            _mapVertexAndItems = graph.Items.ToDictionary(i => i.Vertex, i => i.Items);
+            _mapVertexAndSCC = _graph.Items
                 .ToDictionary(
                     v => v.Vertex,
                     _ => new StronglyConnectedComponentItem());
@@ -75,16 +83,16 @@ namespace Library.Graph.Operations
         /// </summary>
         public IEnumerator<IEnumerable<TValue>> GetEnumerator()
         {
-            foreach (var vertex in _mapVertexAndItem.Keys)
+            foreach (var vertex in _mapVertexAndSCC.Keys)
             {
-                if (_mapVertexAndItem[vertex].Id is null)
+                if (_mapVertexAndSCC[vertex].Id is null)
                 {
                     SetupIterator(vertex);
                 }
             }
 
             var maxElementsInComponent = -1;
-            foreach (var item in _mapVertexAndItem
+            foreach (var item in _mapVertexAndSCC
                 .Values
                 .OrderByDescending(component => component.Items.Count)
                 .Select(component => component.Items))
@@ -103,29 +111,29 @@ namespace Library.Graph.Operations
 
         private void SetupIterator(TValue vertex)
         {
-            _mapVertexAndItem[vertex] = new StronglyConnectedComponentItem(_nextIndex, _nextIndex++);
+            _mapVertexAndSCC[vertex] = new StronglyConnectedComponentItem(_nextIndex, _nextIndex++);
 
             _vertices.Push(vertex);
 
-            foreach (var successor in _graph.View.GetValuesByVertex(vertex))
+            foreach (var successor in _mapVertexAndItems[vertex])
             {
-                if (_mapVertexAndItem[successor].Id is null)
+                if (_mapVertexAndSCC[successor].Id is null)
                 {
                     SetupIterator(successor);
-                    _mapVertexAndItem[vertex].SetMinLLIdByLLID(_mapVertexAndItem[successor]);
+                    _mapVertexAndSCC[vertex].SetMinLLIdByLLID(_mapVertexAndSCC[successor]);
                 }
                 else if (_vertices.Contains(successor))
                 {
-                    _mapVertexAndItem[vertex].SetMinLLIdByIndex(_mapVertexAndItem[successor]);
+                    _mapVertexAndSCC[vertex].SetMinLLIdByIndex(_mapVertexAndSCC[successor]);
                 }
             }
-            if (_mapVertexAndItem[vertex].LowLinkId == _mapVertexAndItem[vertex].Id)
+            if (_mapVertexAndSCC[vertex].LowLinkId == _mapVertexAndSCC[vertex].Id)
             {
                 TValue poppedVertex;
                 do
                 {
                     poppedVertex = _vertices.Pop();
-                    _mapVertexAndItem[vertex].AddElements(poppedVertex);
+                    _mapVertexAndSCC[vertex].AddElements(poppedVertex);
 
                 } while (!poppedVertex.Equals(vertex));
             }
@@ -135,7 +143,8 @@ namespace Library.Graph.Operations
 
         private int _nextIndex;
         private readonly Stack<TValue> _vertices;
-        private readonly Dictionary<TValue, StronglyConnectedComponentItem> _mapVertexAndItem;
-        private readonly OrientedAdjacensiesGraph<TValue> _graph;
+        private readonly Dictionary<TValue, StronglyConnectedComponentItem> _mapVertexAndSCC;
+        private readonly AdjacensiesBasedGraph<TValue> _graph;
+        private readonly Dictionary<TValue, IReadOnlyList<TValue>> _mapVertexAndItems;
     }
 }

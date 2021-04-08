@@ -2,20 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using Library.Graph.Structures;
 using Library.Graph.Types;
-using Library.Graph.Views;
-using Library.Graph;
-using Library.Graph.ConvertibleTypes;
-using Library.Graph.Types.Edges;
 
 namespace Library.Graph.Operations
 {
     public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgesViewItem<TValue>>
-         where TValue : IStringConvertible<TValue>, new()
+         where TValue : notnull, new()
     {
-        public MinimumSpanningTreeIterator(OrientedEdgesGraph<TValue> graph)
+        public MinimumSpanningTreeIterator(EdgesBasedGraph<TValue> graph)
         {
-            _graph = graph ?? throw new ArgumentNullException(nameof(graph));
+            if (graph is null)
+            {
+                throw new ArgumentNullException(nameof(graph));
+            }
+            if (!graph.IsOriented)
+            {
+                throw new ArgumentException("The algorithm support adjacensies based 'oriented' graph.", nameof(graph));
+            }
+            _graph = graph;
         }
 
         public IEnumerator<EdgesViewItem<TValue>> GetEnumerator()
@@ -23,10 +28,10 @@ namespace Library.Graph.Operations
 
         private IEnumerable<EdgesViewItem<TValue>> SetupIterator()
         {
-            var pq = new MinPrimaryQueue<EdgesViewItem<TValue>>(_graph.View.Items);
-            var uf = new UnionFindStructure<TValue>(_graph.View.Vertices);
+            var pq = new MinPrimaryQueue<EdgesViewItem<TValue>>(_graph.Items);
+            var uf = new UnionFindStructure<TValue>(_graph.Vertices);
             var mstCount = 0;
-            while (!pq.IsEmpty() && mstCount < _graph.View.Vertices.Count - 1)
+            while (!pq.IsEmpty() && mstCount < _graph.Vertices.Count - 1)
             {
                 var edge = pq.DeleteMin();
                 var v = edge.First;
@@ -42,6 +47,6 @@ namespace Library.Graph.Operations
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly OrientedEdgesGraph<TValue> _graph;
+        private readonly EdgesBasedGraph<TValue> _graph;
     }
 }

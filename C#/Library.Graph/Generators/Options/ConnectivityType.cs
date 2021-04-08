@@ -3,7 +3,7 @@
     public enum ConnectivityType
     {
         NotConnected,
-        WeaklyConnected,
+        WeaklyOrJustConnected,
         StronglyConnected
     }
 }

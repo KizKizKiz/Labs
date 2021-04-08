@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Library.Graph.ConvertibleTypes;
-using Library.Graph.Views;
+
 using OfficeOpenXml;
+
+using Library.Graph.Types;
+using Library.Graph.Converter;
 
 namespace Library.Graph.ImportersExporters
 {
-    public sealed class SpreadSheetImporterExporter : IGraphViewExporter, IGraphViewImporter
+    public sealed class SpreadSheetImporterExporter : IGraphExporter, IGraphImporter
     {
         public string? FolderPath { get; }
 
-        public SpreadSheetImporterExporter()
+        public SpreadSheetImporterExporter(GraphConverter graphConverter)
         {
+            _converter = graphConverter ?? throw new ArgumentNullException(nameof(graphConverter));
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
 
-        public SpreadSheetImporterExporter(string folderPath)
+        public SpreadSheetImporterExporter(GraphConverter graphConverter, string folderPath)
+            :this(graphConverter)
         {
             if (folderPath is null)
             {
@@ -35,20 +39,20 @@ namespace Library.Graph.ImportersExporters
             FolderPath = folderPath;
         }
 
-        public async Task ExportAsync<TValue>(AdjacensiesView<TValue> view, bool isOriented)
+        public async Task ExportAsync<TValue>(AdjacensiesBasedGraph<TValue> view)
             where TValue : notnull, IStringConvertible<TValue>
         {
             ValidateView(view);
 
-            var edgesView = ToEdgesView(view);
+            var edgesView = _converter.Convert(view, false);
 
-            await ExportAsync(edgesView, false).ConfigureAwait(false);
+            await ExportAsync(edgesView).ConfigureAwait(false);
         }
 
-        public async Task ExportAsync<TValue>(EdgesView<TValue> view, bool isOriented)
+        public async Task ExportAsync<TValue>(EdgesBasedGraph<TValue> graph)
             where TValue : notnull, IStringConvertible<TValue>
         {
-            ValidateView(view);
+            ValidateView(graph);
 
             string path = CreateFullPath();
             using var package = new ExcelPackage(new FileInfo(path));
@@ -60,22 +64,22 @@ namespace Library.Graph.ImportersExporters
             worksheet.Cells[1, 4].Value = "Type";
             worksheet.Cells[1, 5].Value = "Label";
 
-            for (int i = 0; i < view.Items.Count; i++)
+            for (int i = 0; i < graph.Items.Count; i++)
             {
-                worksheet.Cells[i + 2, 1].Value = view.Items[i].First.ToString();
-                if (view.Items[i].Second is not null && view.Items[i].Second!.IsNotDefaultValue)
+                worksheet.Cells[i + 2, 1].Value = graph.Items[i].First.ToString();
+                if (graph.Items[i].Second is not null && graph.Items[i].Second!.IsNotDefaultValue)
                 {
-                    worksheet.Cells[i + 2, 2].Value = view.Items[i].Second!.ToString();
-                    worksheet.Cells[i + 2, 3].Value = view.Items[i].Weight.HasValue ? view.Items[i].Weight : 0;
-                    worksheet.Cells[i + 2, 4].Value = isOriented ? "Directed" : "Undirected";
-                    worksheet.Cells[i + 2, 5].Value = $"'{view.Items[i].First}' -> '{view.Items[i].Second}'";
+                    worksheet.Cells[i + 2, 2].Value = graph.Items[i].Second!.ToString();
+                    worksheet.Cells[i + 2, 3].Value = graph.Items[i].Weight.HasValue ? graph.Items[i].Weight : 0;
+                    worksheet.Cells[i + 2, 4].Value = graph.IsOriented ? "Directed" : "Undirected";
+                    worksheet.Cells[i + 2, 5].Value = $"'{graph.Items[i].First}' -> '{graph.Items[i].Second}'";
                 }
             }
 
             await package.SaveAsync().ConfigureAwait(false);
         }
 
-        public Task<AdjacensiesView<TValue>> ImportAdjacensiesViewAsync<TValue>(Stream stream)
+        public Task<AdjacensiesBasedGraph<TValue>> ImportAdjacensiesViewAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             if (stream is null)
@@ -94,7 +98,7 @@ namespace Library.Graph.ImportersExporters
             return Task.FromResult(ToAdjacensiesView(CreateEdgesView<TValue>(worksheet)));
         }
 
-        public Task<EdgesView<TValue>> ImportEdgesViewAsync<TValue>(Stream stream)
+        public Task<EdgesBasedGraph<TValue>> ImportEdgesViewAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             if (stream is null)
@@ -113,7 +117,7 @@ namespace Library.Graph.ImportersExporters
             return Task.FromResult(CreateEdgesView<TValue>(worksheet));
         }
 
-        private static EdgesView<TValue> CreateEdgesView<TValue>(ExcelWorksheet worksheet)
+        private EdgesBasedGraph<TValue> CreateEdgesView<TValue>(ExcelWorksheet worksheet)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             var edges = new List<EdgesViewItem<TValue>>();
@@ -139,7 +143,11 @@ namespace Library.Graph.ImportersExporters
                 }
             }
 
-            return new EdgesView<TValue>(edges, vertices, _mapEdgeTypeAndBool[edgeType]);
+            return new EdgesBasedGraph<TValue>(
+                edges,
+                vertices,
+                !edges.All(c => c.Weight == default),
+                _mapEdgeTypeAndBool[edgeType]);
         }
 
         private static string GetEdgeType(ExcelWorksheet worksheet, string edgeType, int i)
@@ -237,35 +245,8 @@ namespace Library.Graph.ImportersExporters
             return path;
         }
 
-        private EdgesView<TValue> ToEdgesView<TValue>(AdjacensiesView<TValue> view)
-            where TValue : notnull
-        {
-            if (view is null)
-            {
-                throw new ArgumentNullException(nameof(view));
-            }
-            return CreateEdgesView();
-
-            EdgesView<TValue> CreateEdgesView()
-            {
-                var edges = new List<EdgesViewItem<TValue>>();
-                foreach (var item in view.Items)
-                {
-                    if (!item.Items.Any())
-                    {
-                        edges.Add(new EdgesViewItem<TValue>(item.Vertex));
-                    }
-                    else
-                    {
-                        edges.AddRange(item.Items.Select(i => new EdgesViewItem<TValue>(item.Vertex, i)));
-                    }
-                }
-                return new EdgesView<TValue>(edges, view.Vertices, false);
-            }
-        }
-
-        private AdjacensiesView<TValue> ToAdjacensiesView<TValue>(EdgesView<TValue> view)
-            where TValue : notnull
+        private AdjacensiesBasedGraph<TValue> ToAdjacensiesView<TValue>(EdgesBasedGraph<TValue> view)
+            where TValue : notnull, IStringConvertible<TValue>
         {
             if (view is null)
             {
@@ -273,7 +254,7 @@ namespace Library.Graph.ImportersExporters
             }
             return CreateAdjacensiesView();
 
-            AdjacensiesView<TValue> CreateAdjacensiesView()
+            AdjacensiesBasedGraph<TValue> CreateAdjacensiesView()
             {
                 var mapVertexAndList = new Dictionary<TValue, List<TValue>>();
                 foreach (var item in view.Items)
@@ -287,14 +268,15 @@ namespace Library.Graph.ImportersExporters
                         mapVertexAndList[item.First].Add(item.Second!);
                     }
                 }
-                return new AdjacensiesView<TValue>(
-                    mapVertexAndList.Select(
-                        kv => new AdjacensyViewItem<TValue>(kv.Key, kv.Value)), 
-                    view.Vertices);
+                return new AdjacensiesBasedGraph<TValue>(
+                    mapVertexAndList.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value)), 
+                    view.Vertices,
+                    view.IsOriented, 
+                    view.ConnectivityType);
             }
         }
 
-        private static void ValidateView<TViewItem, TValue>(IGraphView<TViewItem, TValue> view)
+        private static void ValidateView<TViewItem, TValue>(IGraph<TViewItem, TValue> view)
             where TValue : notnull
             where TViewItem : IGraphViewItem<TValue>
         {
@@ -317,5 +299,6 @@ namespace Library.Graph.ImportersExporters
             { "Directed", true },
             { "Undirected", false },
         };
+        private readonly GraphConverter _converter;
     }
 }

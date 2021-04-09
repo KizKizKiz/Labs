@@ -9,8 +9,9 @@ namespace Library.Graph.Types
     {
         public TransportNetworkGraph(
             IEnumerable<AdjacensyGraphItem<TValue>> adjacensies,
-            IEnumerable<TValue> vertices)
-            : base(adjacensies, vertices, true, ConnectivityType.WeaklyOrJustConnected)
+            IEnumerable<TValue> vertices,
+            bool needToValidateConnectivityType = false)
+            : base(adjacensies, vertices, true, ConnectivityType.WeaklyOrJustConnected, needToValidateConnectivityType)
         { }
     }
 }

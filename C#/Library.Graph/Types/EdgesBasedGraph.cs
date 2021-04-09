@@ -21,6 +21,7 @@ namespace Library.Graph.Types
             bool needToValidateConnectivityType = false)
             : base(items, vertices, isOriented, connectivityType, needToValidateConnectivityType)
         {
+            IsWeighted = isWeighted;
         }
 
         public EdgesBasedGraph(

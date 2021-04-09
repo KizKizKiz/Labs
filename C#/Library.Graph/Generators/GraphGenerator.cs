@@ -62,7 +62,7 @@ namespace Library.Graph.Generators
                 var vertex = Options.VerticiesFactory();
                 if (!MapVertexAndLists.ContainsKey(vertex))
                 {
-                    var elements = Poisson.Sample(Options.MeanConnectivity);
+                    var elements = (int)DistributionCalculator.GetDistribution();
 
                     elements = elements <= 0 ? 1 : (elements >= Options.VerticesCount ? Options.VerticesCount - 1 : elements);
 

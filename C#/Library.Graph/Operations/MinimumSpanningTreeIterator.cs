@@ -28,7 +28,7 @@ namespace Library.Graph.Operations
 
         private IEnumerable<EdgesViewItem<TValue>> SetupIterator()
         {
-            var pq = new MinPrimaryQueue<EdgesViewItem<TValue>>(_graph.Items);
+            var pq = new MinPriorityQueue<EdgesViewItem<TValue>>(_graph.Items);
             var uf = new UnionFindStructure<TValue>(_graph.Vertices);
             var mstCount = 0;
             while (!pq.IsEmpty() && mstCount < _graph.Vertices.Count - 1)

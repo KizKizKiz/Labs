@@ -33,7 +33,7 @@ namespace Library.Graph.Operations
 
         public int Calculate()
         {
-            
+            return 0;
         }
 
         private void VerifyIfNeed(bool needToValidateTNGraph)

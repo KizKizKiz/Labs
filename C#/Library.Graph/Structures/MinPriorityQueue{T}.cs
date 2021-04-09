@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Library.Graph.Structures
 {
-    internal class MinPrimaryQueue<TValue> : IEnumerable<TValue>
+    internal class MinPriorityQueue<TValue> : IEnumerable<TValue>
         where TValue : IComparable<TValue>
     {
-        public MinPrimaryQueue(int initCapacity) 
+        public MinPriorityQueue(int initCapacity) 
         {
             if (initCapacity < 0)
             {
@@ -19,9 +19,9 @@ namespace Library.Graph.Structures
             _count = 0;
         }
 
-        public MinPrimaryQueue() : this(1) { }
+        public MinPriorityQueue() : this(1) { }
 
-        public MinPrimaryQueue(IEnumerable<TValue> items) 
+        public MinPriorityQueue(IEnumerable<TValue> items) 
         {
             var itemsList = items.ToList();
 

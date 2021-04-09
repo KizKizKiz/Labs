@@ -41,7 +41,7 @@ namespace Library.Graph.Helpers
             foreach (var item in graph.Items)
             {
                 var otherEdge = item.Second is not null ?
-                    new EdgesViewItem<TValue>(item.First, item.Second, item.Weight.HasValue ? item.Weight!.Value : 0)
+                    new EdgesViewItem<TValue>(item.Second, item.First, item.Weight.HasValue ? item.Weight!.Value : 0)
                     : new EdgesViewItem<TValue>(item.First);
 
                 if (!graph.Items.Contains(otherEdge))

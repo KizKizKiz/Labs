@@ -147,11 +147,9 @@ namespace Library.Graph.Helpers
             {
                 return ConnectivityType.NotConnected;
             }
-            if (mapVertexAndItems.Values.Any(c => c.IsAllReached == false))
-            {
-                return ConnectivityType.WeaklyOrJustConnected;
-            }
-            return ConnectivityType.StronglyConnected;
+            return mapVertexAndItems.Values.Any(c => c.IsAllReached == false)
+                ? ConnectivityType.WeaklyOrJustConnected
+                : ConnectivityType.StronglyConnected;
         }
 
         private static void ValidateGraph<TViewItem>(Graph<TViewItem, TValue> graph)

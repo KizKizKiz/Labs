@@ -259,7 +259,7 @@ namespace Library.Graph.ImportersExporters
             }
             if (!graph.Items.Any())
             {
-                throw new ArgumentException("The items collections is empty.", nameof(graph.Items));
+                throw new ArgumentException("The items collections is empty.", nameof(graph));
             }
         }
 

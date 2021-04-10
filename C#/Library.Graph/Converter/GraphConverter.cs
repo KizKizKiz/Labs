@@ -16,11 +16,9 @@ namespace Library.Graph.Converter
         public AdjacensiesBasedGraph<TValue> Convert<TValue>(EdgesBasedGraph<TValue> graph)
             where TValue : notnull
         {
-            if (graph is null)
-            {
-                throw new ArgumentNullException(nameof(graph));
-            }
-            return CreateAdjacensiesView();
+            return graph is null ?
+                throw new ArgumentNullException(nameof(graph))
+                : CreateAdjacensiesView();
 
             AdjacensiesBasedGraph<TValue> CreateAdjacensiesView()
             {
@@ -47,11 +45,9 @@ namespace Library.Graph.Converter
         public EdgesBasedGraph<TValue> Convert<TValue>(AdjacensiesBasedGraph<TValue> graph, bool isWeighted)
             where TValue : notnull
         {
-            if (graph is null)
-            {
-                throw new ArgumentNullException(nameof(graph));
-            }
-            return new EdgesBasedGraph<TValue>(
+            return graph is null
+                ? throw new ArgumentNullException(nameof(graph))
+                : new EdgesBasedGraph<TValue>(
                 CreateEdges(),
                 graph.Vertices,
                 isWeighted,

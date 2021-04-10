@@ -303,5 +303,8 @@ dotnet_diagnostic.IDE0059.severity = suggestion
 # IDE0046: Use conditional expression for return
 dotnet_diagnostic.IDE0046.severity = suggestion
 
-# Default severity for analyzer diagnostics with category 'Usage'
-dotnet_analyzer_diagnostic.category-Usage.severity = none
+# IDE0046: Use conditional expression for return
+dotnet_diagnostic.IDE0046.severity = suggestion
+
+# IDE0052: Remove unread private members
+dotnet_diagnostic.IDE0052.severity = error

@@ -11,22 +11,18 @@ namespace Library.Graph.Operations.Extensions
             this AdjacensiesBasedGraph<TValue> graph)
             where TValue : notnull, new()
         {
-            if (graph is null)
-            {
-                throw new ArgumentNullException(nameof(graph));
-            }
-            return new BFSIterator<TValue>(graph);
+            return graph is null ?
+                throw new ArgumentNullException(nameof(graph))
+                : new BFSIterator<TValue>(graph);
         }
 
         public static IEnumerable<TValue> SetupDFSWalking<TValue>(
             this AdjacensiesBasedGraph<TValue> graph)
             where TValue : notnull, new()
         {
-            if (graph is null)
-            {
-                throw new ArgumentNullException(nameof(graph));
-            }
-            return new DFSIterator<TValue>(graph);
+            return graph is null ?
+                throw new ArgumentNullException(nameof(graph))
+                : new DFSIterator<TValue>(graph);
         }
 
         public static IEnumerable<EdgesViewItem<TValue>> SetupMSTWalking<TValue>(
@@ -44,11 +40,8 @@ namespace Library.Graph.Operations.Extensions
             this AdjacensiesBasedGraph<TValue> graph)
             where TValue : notnull, new()
         {
-            if (graph is null)
-            {
-                throw new ArgumentNullException(nameof(graph));
-            }
-            return new StronglyConnectedComponentsIterator<TValue>(graph);
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new StronglyConnectedComponentsIterator<TValue>(graph);
         }
     }
 }

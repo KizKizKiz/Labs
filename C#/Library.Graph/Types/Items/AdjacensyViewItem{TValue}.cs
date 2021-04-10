@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -39,12 +39,6 @@ namespace Library.Graph.Types
         }
 
         public override string ToString()
-        {
-            if (Items.Any())
-            {
-                return $"{Vertex} : {string.Join(" , ", Items)}";
-            }
-            return $"{Vertex} : none";
-        }
+            => Items.Any() ? $"{Vertex} : {string.Join(" , ", Items)}" : $"{Vertex} : none";
     }
 }

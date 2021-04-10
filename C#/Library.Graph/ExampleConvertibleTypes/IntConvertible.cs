@@ -22,9 +22,7 @@ namespace Library.Graph.ExampleConvertibleTypes
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-#pragma warning disable CA1508 // Avoid dead conditional code
             if (string.IsNullOrWhiteSpace(entity))
-#pragma warning restore CA1508 // Avoid dead conditional code
             {
                 throw new ArgumentException("Received empty string or string that contains only whitespaces.", nameof(entity));
             }

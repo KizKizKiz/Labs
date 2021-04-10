@@ -23,11 +23,11 @@ namespace Library.Graph.Operations
             {
                 throw new ArgumentException("The graph items collection is empty.", nameof(graph));
             }
-            _graph = graph;
+            //_graph = graph;
         }
 
         public int Calculate() => 0;
 
-        private readonly TransportNetworkGraph<TValue> _graph;
+        //private readonly TransportNetworkGraph<TValue> _graph;
     }
 }

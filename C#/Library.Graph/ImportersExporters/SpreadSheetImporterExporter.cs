@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace Library.Graph.ImportersExporters
         }
 
         public SpreadSheetImporterExporter(GraphConverter graphConverter, string folderPath)
-            :this(graphConverter)
+            : this(graphConverter)
         {
             if (folderPath is null)
             {
@@ -39,12 +39,12 @@ namespace Library.Graph.ImportersExporters
             FolderPath = folderPath;
         }
 
-        public async Task ExportAsync<TValue>(AdjacensiesBasedGraph<TValue> view)
+        public async Task ExportAsync<TValue>(AdjacensiesBasedGraph<TValue> graph)
             where TValue : notnull, IStringConvertible<TValue>
         {
-            ValidateView(view);
+            ValidateGraph(graph);
 
-            var edgesView = _converter.Convert(view, false);
+            var edgesView = _converter.Convert(graph, false);
 
             await ExportAsync(edgesView).ConfigureAwait(false);
         }
@@ -52,9 +52,9 @@ namespace Library.Graph.ImportersExporters
         public async Task ExportAsync<TValue>(EdgesBasedGraph<TValue> graph)
             where TValue : notnull, IStringConvertible<TValue>
         {
-            ValidateView(graph);
+            ValidateGraph(graph);
 
-            string path = CreateFullPath();
+            var path = CreateFullPath();
             using var package = new ExcelPackage(new FileInfo(path));
             var worksheet = package.Workbook.Worksheets.Add("GRAPH_DUMP");
 
@@ -64,7 +64,7 @@ namespace Library.Graph.ImportersExporters
             worksheet.Cells[1, 4].Value = "Type";
             worksheet.Cells[1, 5].Value = "Label";
 
-            for (int i = 0; i < graph.Items.Count; i++)
+            for (var i = 0; i < graph.Items.Count; i++)
             {
                 worksheet.Cells[i + 2, 1].Value = graph.Items[i].First.ToString();
                 if (graph.Items[i].Second is not null && graph.Items[i].Second!.IsNotDefaultValue)
@@ -95,7 +95,7 @@ namespace Library.Graph.ImportersExporters
 
             VerifyHeaders(worksheet);
 
-            return Task.FromResult(ToAdjacensiesView(CreateEdgesView<TValue>(worksheet)));
+            return Task.FromResult(_converter.Convert(CreateEdgesGraph<TValue>(worksheet)));
         }
 
         public Task<EdgesBasedGraph<TValue>> ImportEdgesViewAsync<TValue>(Stream stream)
@@ -114,21 +114,21 @@ namespace Library.Graph.ImportersExporters
 
             VerifyHeaders(worksheet);
 
-            return Task.FromResult(CreateEdgesView<TValue>(worksheet));
+            return Task.FromResult(CreateEdgesGraph<TValue>(worksheet));
         }
 
-        private EdgesBasedGraph<TValue> CreateEdgesView<TValue>(ExcelWorksheet worksheet)
+        private EdgesBasedGraph<TValue> CreateEdgesGraph<TValue>(ExcelWorksheet worksheet)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             var edges = new List<EdgesViewItem<TValue>>();
             var vertices = new HashSet<TValue>();
             string edgeType = null!;
-            for (int i = 2; i <= worksheet.Dimension.End.Row; i++) // int i = 1 Skip headers
+            for (var i = 2; i <= worksheet.Dimension.End.Row; i++) // int i = 2 Skip headers
             {
                 var value = new TValue();
-                TValue first = GetSource(worksheet, i, value);
-                TValue second = GetTarget(worksheet, i, value);
-                double weight = GetWeight(worksheet, i);
+                var first = GetSource(worksheet, i, value);
+                var second = GetTarget(worksheet, i, value);
+                var weight = GetWeight(worksheet, i);
 
                 edgeType = GetEdgeType(worksheet, edgeType, i);
 
@@ -136,10 +136,10 @@ namespace Library.Graph.ImportersExporters
                     new EdgesViewItem<TValue>(first) :
                     new EdgesViewItem<TValue>(first, second, weight));
 
-                vertices.Add(first);
+                _ = vertices.Add(first);
                 if (!EqualityComparer<TValue>.Default.Equals(second, default))
                 {
-                    vertices.Add(second);
+                    _ = vertices.Add(second);
                 }
             }
 
@@ -159,7 +159,7 @@ namespace Library.Graph.ImportersExporters
             {
                 throw new SpreadSheetFormatException($"Received a bad edge type. Possible edge types: {string.Join(',', _mapEdgeTypeAndBool.Keys)}");
             }
-            if (edgeType is not null && !edgeType.Equals(value.ToString(), StringComparison.InvariantCultureIgnoreCase))
+            if (edgeType is not null && !edgeType.Equals(value.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 throw new SpreadSheetFormatException($"Edge type has changed. Please make sure that all edges have the same type (Received edge type: '{value}').");
             }
@@ -212,22 +212,22 @@ namespace Library.Graph.ImportersExporters
             try
             {
                 if (string.IsNullOrWhiteSpace(worksheet.Cells[1, 1].Value.ToString())
-                    || worksheet.Cells[1, 1].Value.ToString()!.Equals("Source"))
+                    || worksheet.Cells[1, 1].Value.ToString()!.Equals("Source", StringComparison.Ordinal))
                 {
                     throw new SpreadSheetFormatException("'Source' column is not presented.");
                 }
                 if (string.IsNullOrWhiteSpace(worksheet.Cells[1, 2].Value.ToString())
-                    || worksheet.Cells[1, 2].Value.ToString()!.Equals("Target"))
+                    || worksheet.Cells[1, 2].Value.ToString()!.Equals("Target", StringComparison.Ordinal))
                 {
                     throw new SpreadSheetFormatException("'Target' column is not presented.");
                 }
                 if (string.IsNullOrWhiteSpace(worksheet.Cells[1, 3].Value.ToString())
-                    || worksheet.Cells[1, 3].Value.ToString()!.Equals("Weight"))
+                    || worksheet.Cells[1, 3].Value.ToString()!.Equals("Weight", StringComparison.Ordinal))
                 {
                     throw new SpreadSheetFormatException("'Weight' column is not presented.");
                 }
                 if (string.IsNullOrWhiteSpace(worksheet.Cells[1, 4].Value.ToString())
-                    || worksheet.Cells[1, 4].Value.ToString()!.Equals("Type"))
+                    || worksheet.Cells[1, 4].Value.ToString()!.Equals("Type", StringComparison.Ordinal))
                 {
                     throw new SpreadSheetFormatException("'Type' column is not presented.");
                 }
@@ -240,61 +240,30 @@ namespace Library.Graph.ImportersExporters
 
         private string CreateFullPath()
         {
-            var fileName = $"graph-{DateTime.Now.ToString("HH-MM-ss")}.xlsx";
+            var fileName = $"graph-{DateTime.Now:HH-MM-ss}.xlsx";
             var path = FolderPath is not null ? Path.Combine(FolderPath, fileName) : fileName;
             return path;
         }
 
-        private AdjacensiesBasedGraph<TValue> ToAdjacensiesView<TValue>(EdgesBasedGraph<TValue> view)
-            where TValue : notnull, IStringConvertible<TValue>
-        {
-            if (view is null)
-            {
-                throw new ArgumentNullException(nameof(view));
-            }
-            return CreateAdjacensiesView();
-
-            AdjacensiesBasedGraph<TValue> CreateAdjacensiesView()
-            {
-                var mapVertexAndList = new Dictionary<TValue, List<TValue>>();
-                foreach (var item in view.Items)
-                {
-                    if (!mapVertexAndList.ContainsKey(item.First))
-                    {
-                        mapVertexAndList[item.First] = new List<TValue>();
-                    }
-                    if (item.Second is not null)
-                    {
-                        mapVertexAndList[item.First].Add(item.Second!);
-                    }
-                }
-                return new AdjacensiesBasedGraph<TValue>(
-                    mapVertexAndList.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value)), 
-                    view.Vertices,
-                    view.IsOriented, 
-                    view.ConnectivityType);
-            }
-        }
-
-        private static void ValidateView<TViewItem, TValue>(IGraph<TViewItem, TValue> view)
+        private static void ValidateGraph<TViewItem, TValue>(IGraph<TViewItem, TValue> graph)
             where TValue : notnull
             where TViewItem : IGraphViewItem<TValue>
         {
-            if (view is null)
+            if (graph is null)
             {
-                throw new ArgumentNullException(nameof(view));
+                throw new ArgumentNullException(nameof(graph));
             }
-            if (view.Items is null)
+            if (graph.Items is null)
             {
-                throw new ArgumentNullException(nameof(view.Items));
+                throw new ArgumentException(nameof(graph.Items));
             }
-            if (!view.Items.Any())
+            if (!graph.Items.Any())
             {
-                throw new ArgumentException("The items collections is empty.", nameof(view.Items));
+                throw new ArgumentException("The items collections is empty.", nameof(graph.Items));
             }
         }
 
-        private static Dictionary<string, bool> _mapEdgeTypeAndBool = new()
+        private static readonly Dictionary<string, bool> _mapEdgeTypeAndBool = new()
         {
             { "Directed", true },
             { "Undirected", false },

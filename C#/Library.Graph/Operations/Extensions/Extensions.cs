@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Library.Graph.Types;
 
 namespace Library.Graph.Operations.Extensions
 {
-    public static class Extensions
+    public static class OperationsExtensions
     {
         public static IEnumerable<TValue> SetupBFSWalking<TValue>(
             this AdjacensiesBasedGraph<TValue> graph)
-            where TValue: notnull, new()
+            where TValue : notnull, new()
         {
             if (graph is null)
             {

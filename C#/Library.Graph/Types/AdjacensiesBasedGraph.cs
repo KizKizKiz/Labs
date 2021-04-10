@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Library.Graph.Generators;
 using Library.Graph.Converter;
@@ -8,7 +8,7 @@ using Library.Graph.Helpers;
 namespace Library.Graph.Types
 {
     public class AdjacensiesBasedGraph<TValue> : Graph<AdjacensyGraphItem<TValue>, TValue>
-        where TValue: notnull
+        where TValue : notnull
     {
         public AdjacensiesBasedGraph(
             IEnumerable<AdjacensyGraphItem<TValue>> adjacensies,
@@ -34,7 +34,6 @@ namespace Library.Graph.Types
             => _graphDeterminant.DeterminateIsDirected(this);
 
         private static readonly GraphDeterminantHelper<TValue> _graphDeterminant
-            = new GraphDeterminantHelper<TValue>(
-                new GraphConverter(DefaultRandomizer.Randomizer));
+            = new(new GraphConverter(DefaultRandomizer.Randomizer));
     }
 }

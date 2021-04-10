@@ -8,7 +8,7 @@ namespace Library.Graph.Structures
     internal class MinPriorityQueue<TValue> : IEnumerable<TValue>
         where TValue : IComparable<TValue>
     {
-        public MinPriorityQueue(int initCapacity) 
+        public MinPriorityQueue(int initCapacity)
         {
             if (initCapacity < 0)
             {
@@ -21,18 +21,18 @@ namespace Library.Graph.Structures
 
         public MinPriorityQueue() : this(1) { }
 
-        public MinPriorityQueue(IEnumerable<TValue> items) 
+        public MinPriorityQueue(IEnumerable<TValue> items)
         {
             var itemsList = items.ToList();
 
             _count = itemsList.Count;
             _items = new TValue[_count + 1];
 
-            for (int i = 0; i < _count; i++)
+            for (var i = 0; i < _count; i++)
             {
                 _items[i + 1] = itemsList[i];
             }
-            for (int k = _count / 2; k >= 1; k--)
+            for (var k = _count / 2; k >= 1; k--)
             {
                 Correct(k);
             }
@@ -42,14 +42,14 @@ namespace Library.Graph.Structures
 
         public int Count() => _count;
 
-        public TValue TakeMin() 
+        public TValue TakeMin()
         {
             ThrowIfEmpty();
 
             return _items[1];
         }
 
-        public void Add(TValue x) 
+        public void Add(TValue x)
         {
             EnsureCapacity();
 
@@ -58,7 +58,7 @@ namespace Library.Graph.Structures
             BubbleUpByIndex(_count);
         }
 
-        public TValue DeleteMin() 
+        public TValue DeleteMin()
         {
             ThrowIfEmpty();
 
@@ -81,8 +81,8 @@ namespace Library.Graph.Structures
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        
-        private void EnsureCapacity() 
+
+        private void EnsureCapacity()
         {
             if (_count != _items.Length - 1)
             {
@@ -90,7 +90,7 @@ namespace Library.Graph.Structures
             }
 
             var temp = new TValue[_items.Length * 2];
-            for (int i = 1; i <= _count; i++) 
+            for (var i = 1; i <= _count; i++)
             {
                 temp[i] = _items[i];
             }
@@ -105,21 +105,21 @@ namespace Library.Graph.Structures
             }
         }
 
-        private void BubbleUpByIndex(int k) 
+        private void BubbleUpByIndex(int k)
         {
-            while (k > 1 && IsGreaterThanSecond(k / 2, k)) 
+            while (k > 1 && IsGreaterThanSecond(k / 2, k))
             {
-                SwapByIndexies(k, k/2);
-                k = k/2;
+                SwapByIndexies(k, k / 2);
+                k /= 2;
             }
         }
 
-        private void Correct(int k) 
+        private void Correct(int k)
         {
-            while (2 * k <= _count) 
+            while (2 * k <= _count)
             {
-                int j = 2 * k;
-                if (j < _count && IsGreaterThanSecond(j, j+1))
+                var j = 2 * k;
+                if (j < _count && IsGreaterThanSecond(j, j + 1))
                 {
                     j++;
                 }
@@ -136,8 +136,8 @@ namespace Library.Graph.Structures
         private bool IsGreaterThanSecond(int i, int j) => _items[i].CompareTo(_items[j]) > 0;
 
         private void SwapByIndexies(int i, int j)
-         {
-            TValue swap = _items[i];
+        {
+            var swap = _items[i];
             _items[i] = _items[j];
             _items[j] = swap;
         }

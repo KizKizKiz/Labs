@@ -75,6 +75,6 @@ namespace Library.Graph.Structures
             return result;
         }
 
-        private readonly Dictionary<TValue, (TValue Vertex, int Rank)> _mapVertexAndRank = new Dictionary<TValue, (TValue Vertex, int Rank)>();
+        private readonly Dictionary<TValue, (TValue Vertex, int Rank)> _mapVertexAndRank = new();
     }
 }

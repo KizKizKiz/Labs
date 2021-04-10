@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Library.Graph.Converter;
 using Library.Graph.Generators;
@@ -13,8 +13,8 @@ namespace Library.Graph.Types
         public bool IsWeighted { get; }
 
         public EdgesBasedGraph(
-            IEnumerable<EdgesViewItem<TValue>> items, 
-            IEnumerable<TValue> vertices, 
+            IEnumerable<EdgesViewItem<TValue>> items,
+            IEnumerable<TValue> vertices,
             bool isWeighted,
             bool isOriented,
             ConnectivityType connectivityType,
@@ -41,7 +41,6 @@ namespace Library.Graph.Types
             => _graphDeterminant.DeterminateIsDirected(this);
 
         private static readonly GraphDeterminantHelper<TValue> _graphDeterminant
-            = new GraphDeterminantHelper<TValue>(
-                new GraphConverter(DefaultRandomizer.Randomizer));
+            = new(new GraphConverter(DefaultRandomizer.Randomizer));
     }
 }

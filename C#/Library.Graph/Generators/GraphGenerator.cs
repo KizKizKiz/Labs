@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using MathNet.Numerics.Distributions;
 
 using Library.Graph.Types;
 using Library.Graph.Generators.Options;
@@ -19,21 +17,16 @@ namespace Library.Graph.Generators
 
         public IDistributionCalculator DistributionCalculator { get; private set; }
 
-        public GraphGenerator(TOptions options, IRandomizer? randomizer = null, IDistributionCalculator? distributionCalculator = null)
+        protected GraphGenerator(TOptions options, IRandomizer? randomizer = null, IDistributionCalculator? distributionCalculator = null)
         {
             Options = options ?? throw new ArgumentNullException(nameof(options));
             if (randomizer is not null)
             {
                 Randomizer = randomizer;
             }
-            if (distributionCalculator is not null)
-            {
-                DistributionCalculator = distributionCalculator;
-            }
-            else
-            {
-                DistributionCalculator = new DefaultDistributionCalculator(options.MeanConnectivity);
-            }
+            DistributionCalculator = distributionCalculator is not null ?
+                distributionCalculator
+                : new DefaultDistributionCalculator(options.MeanConnectivity);
         }
 
         public GraphGeneratingResult<TGraph, TViewItem, TValue> Generate()
@@ -44,7 +37,7 @@ namespace Library.Graph.Generators
 
         protected TOptions Options { get; set; }
 
-        protected Dictionary<TValue, (int Count, HashSet<TValue> Items)> MapVertexAndLists { get; private set; } = new ();
+        protected Dictionary<TValue, (int Count, HashSet<TValue> Items)> MapVertexAndLists { get; private set; } = new();
 
         protected abstract GraphGeneratingResult<TGraph, TViewItem, TValue> BuildCore();
 
@@ -75,9 +68,13 @@ namespace Library.Graph.Generators
             => vertexFrom.Equals(vertexTo);
 
         protected bool IsContainsDuplicate(TValue vertex, IEnumerable<TValue> items)
-            => items.Contains(vertex);
+            => items is not null ?
+            items.Contains(vertex)
+            : throw new ArgumentNullException(nameof(items));
 
         protected TValue GetRandomVertexFrom(IReadOnlyList<TValue> vertices)
-            => vertices[Randomizer.FromRange(vertices.Count)];
+            => vertices is not null ?
+            vertices[Randomizer.FromRange(vertices.Count)]
+            : throw new ArgumentNullException(nameof(vertices));
     }
 }

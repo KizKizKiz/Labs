@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -36,7 +36,7 @@ namespace Library.Graph.Operations
                 var edge = pq.DeleteMin();
                 var v = edge.First;
                 var w = edge.Second ?? throw new InvalidOperationException("Received invalid view item, cause a second vertice in edge is null.");
-                
+
                 if (uf.TryUnion(v, w))
                 {
                     mstCount++;

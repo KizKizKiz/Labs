@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Library.Graph.Types;
@@ -6,14 +6,14 @@ using Library.Graph.Generators.Options;
 
 namespace Library.Graph.Generators
 {
-    public sealed class TransportNetworkGraphGenerator<TValue> : GraphGenerator<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue, TransportNetworkGraphGeneratorOptions<TValue>>
+    public sealed class TransportNetworkGraphGenerator<TValue> : GraphGenerator<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue, TransportNetworkGraphGeneratorOptions<TValue>>
         where TValue : notnull
     {
         public TransportNetworkGraphGenerator(TransportNetworkGraphGeneratorOptions<TValue> options)
             : base(options)
         { }
 
-        protected override GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
+        protected override GraphGeneratingResult<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
         {
             _vertexReachTargetCount = 0; //every build need to wipe count
 
@@ -23,12 +23,10 @@ namespace Library.Graph.Generators
             InitSource();
             InitBody();
 
-            return new GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
-                new AdjacensiesBasedGraph<TValue>(
+            return new GraphGeneratingResult<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
+                new TransportNetworkGraph<TValue>(
                     MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items)),
-                    MapVertexAndLists.Keys,
-                    true,
-                    ConnectivityType.WeaklyOrJustConnected));
+                    MapVertexAndLists.Keys));
         }
 
         private void DeterminateSourceAndTarget()
@@ -44,17 +42,17 @@ namespace Library.Graph.Generators
         private void InitBody()
         {
             var stronglyConnectedBody = MapVertexAndLists.Where(c => !c.Key.Equals(_source) && !c.Key.Equals(_target));
-            stronglyConnectedBody.Aggregate((f, s) =>
-            {
-                f.Value.Items.Add(s.Key);
-                return s;
-            });
+            _ = stronglyConnectedBody.Aggregate((f, s) =>
+              {
+                  _ = f.Value.Items.Add(s.Key);
+                  return s;
+              });
 
-            stronglyConnectedBody.Last().Value.Items.Add(stronglyConnectedBody.First().Key);
+            _ = stronglyConnectedBody.Last().Value.Items.Add(stronglyConnectedBody.First().Key);
 
             foreach (var kv in stronglyConnectedBody)
             {
-                var _verticesCount = kv.Value.Count > Options.VerticesCount - 2 ? Options.VerticesCount - 2: kv.Value.Count; //_verticesCount - 2 (_source, _target)
+                var _verticesCount = kv.Value.Count > Options.VerticesCount - 2 ? Options.VerticesCount - 2 : kv.Value.Count; //_verticesCount - 2 (_source, _target)
                 while (_verticesCount > kv.Value.Items.Count)
                 {
                     var vertex = GetRandomVertexFrom(_vertices);
@@ -100,7 +98,7 @@ namespace Library.Graph.Generators
             }
         }
 
-        private int _vertexReachTargetCount = 0;
+        private int _vertexReachTargetCount;
         private Dictionary<TValue, bool> _mapVertexAndIsReached = new();
         private List<TValue> _vertices = new();
         private TValue _source = default!;

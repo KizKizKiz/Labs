@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 using Library.Graph.Types;
 
@@ -6,10 +6,10 @@ namespace Library.Graph.ImportersExporters
 {
     public interface IGraphExporter
     {
-        Task ExportAsync<TValue>(AdjacensiesBasedGraph<TValue> view)
+        Task ExportAsync<TValue>(AdjacensiesBasedGraph<TValue> graph)
             where TValue : notnull, IStringConvertible<TValue>;
 
-        Task ExportAsync<TValue>(EdgesBasedGraph<TValue> view)
+        Task ExportAsync<TValue>(EdgesBasedGraph<TValue> graph)
             where TValue : notnull, IStringConvertible<TValue>;
     }
 }

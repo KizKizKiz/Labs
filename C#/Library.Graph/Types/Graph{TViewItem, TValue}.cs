@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,9 +19,9 @@ namespace Library.Graph.Types
 
         public IReadOnlyList<TValue> Vertices { get; }
 
-        public Graph(
-            IEnumerable<TViewItem> items, 
-            IEnumerable<TValue> vertices, 
+        protected Graph(
+            IEnumerable<TViewItem> items,
+            IEnumerable<TValue> vertices,
             bool isOriented)
         {
             if (items is null)
@@ -50,7 +50,7 @@ namespace Library.Graph.Types
             IsOriented = isOriented;
         }
 
-        public Graph(
+        protected Graph(
             IEnumerable<TViewItem> items,
             IEnumerable<TValue> vertices,
             bool isOriented,
@@ -73,7 +73,7 @@ namespace Library.Graph.Types
             }
         }
 
-        public Graph(
+        protected Graph(
             IEnumerable<TViewItem> items,
             IEnumerable<TValue> vertices,
             bool isOriented,

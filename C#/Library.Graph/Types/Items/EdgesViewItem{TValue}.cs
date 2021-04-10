@@ -33,10 +33,7 @@ namespace Library.Graph.Types
             Weight = weight;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(First, Second, Weight);
-        }
+        public override int GetHashCode() => HashCode.Combine(First, Second, Weight);
 
         public int CompareTo(EdgesViewItem<TValue>? other)
         {
@@ -56,10 +53,10 @@ namespace Library.Graph.Types
         }
 
         public override string ToString()
-            => $"{First} -> {Second} ({(Weight.HasValue ? Weight.Value : "None")})";
+            => $"{First} -> {Second} ({Weight})";
 
 
-        public bool Equals(EdgesViewItem<TValue>? y)
-            => y is not null && First.Equals(y.First) && Second is not null && Second.Equals(y.Second) && Weight == y.Weight;
+        public bool Equals(EdgesViewItem<TValue>? other)
+            => other is not null && First.Equals(other.First) && Second is not null && Second.Equals(other.Second) && Weight == other.Weight;
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,8 +40,8 @@ namespace Library.Graph.Helpers
 
             foreach (var item in graph.Items)
             {
-                var otherEdge = item.Second is not null ?
-                    new EdgesViewItem<TValue>(item.Second, item.First, item.Weight.HasValue ? item.Weight!.Value : 0)
+                var otherEdge = !EqualityComparer<TValue>.Default.Equals(item.Second, default) ?
+                    new EdgesViewItem<TValue>(item.Second!, item.First, item.Weight.HasValue ? item.Weight!.Value : 0)
                     : new EdgesViewItem<TValue>(item.First);
 
                 if (!graph.Items.Contains(otherEdge))
@@ -98,7 +98,7 @@ namespace Library.Graph.Helpers
                 }
             }
 
-            return mapVertexAndIsMarked.Values.All(c => c == true) ?
+            return mapVertexAndIsMarked.Values.All(c => c) ?
                 ConnectivityType.WeaklyOrJustConnected
                 : ConnectivityType.NotConnected;
         }
@@ -108,7 +108,7 @@ namespace Library.Graph.Helpers
             var mapVertexAndItems = graph.Items
                 .ToDictionary(
                 i => i.Vertex,
-                i => (IsAllReached : false, Items : i.Items));
+                i => (IsAllReached: false, i.Items));
 
             var vertices = mapVertexAndItems.Keys.ToHashSet();
 
@@ -138,7 +138,7 @@ namespace Library.Graph.Helpers
                         }
                     }
                 }
-                if (mapVertexAndIsMarked.Values.All((c) => c == true))
+                if (mapVertexAndIsMarked.Values.All((c) => c))
                 {
                     mapVertexAndItems[adjacensy.Vertex] = (true, mapVertexAndItems[adjacensy.Vertex].Items);
                 }
@@ -163,7 +163,7 @@ namespace Library.Graph.Helpers
             }
             if (!graph.Items.Any())
             {
-                throw new ArgumentException("The graph items collection is empty.", nameof(graph.Items));
+                throw new ArgumentException("The graph items collection is empty.", nameof(graph));
             }
         }
 

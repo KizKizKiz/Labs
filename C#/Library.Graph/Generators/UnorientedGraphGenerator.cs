@@ -1,4 +1,3 @@
-﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -17,12 +16,12 @@ namespace Library.Graph.Generators
         protected override GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
         {
             var items = Options.IsConnected ? CreateConnected() : CreateNotConnected();
-            
+
             return new GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
                 new AdjacensiesBasedGraph<TValue>(
-                    items, 
-                    MapVertexAndLists.Keys, 
-                    false, 
+                    items,
+                    MapVertexAndLists.Keys,
+                    false,
                     Options.IsConnected ? ConnectivityType.WeaklyOrJustConnected : ConnectivityType.NotConnected));
         }
 
@@ -69,8 +68,8 @@ namespace Library.Graph.Generators
                 while (kv.Value.Count > kv.Value.Items.Count && kv.Value.Count > skippedVerticesCount)
                 {
                     var vertex = GetRandomVertexFrom(vertices);
-                    if (!IsLoop(vertex, kv.Key) 
-                        && !IsContainsDuplicate(vertex, kv.Value.Items) 
+                    if (!IsLoop(vertex, kv.Key)
+                        && !IsContainsDuplicate(vertex, kv.Value.Items)
                         && !skippedVertices.Contains(vertex))
                     {
                         _ = kv.Value.Items.Add(vertex);

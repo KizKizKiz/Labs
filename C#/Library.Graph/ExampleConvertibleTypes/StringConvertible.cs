@@ -21,16 +21,13 @@ namespace Library.Graph.ExampleConvertibleTypes
             return this;
         }
 
-        public bool Equals(StringConvertible other)
-            => Entity.Equals(other.Entity);
-        
+        public bool Equals(StringConvertible other) => Entity.Equals(other.Entity, StringComparison.Ordinal);
 
-        public int CompareTo(StringConvertible other)
-            => Entity.CompareTo(other.Entity);
-        
+        public int CompareTo(StringConvertible other) => string.Compare(Entity, other.Entity, StringComparison.Ordinal);
+
         public override string ToString() => Entity;
 
         public static implicit operator StringConvertible(string value)
-            => new StringConvertible(value);
+            => new(value);
     }
 }

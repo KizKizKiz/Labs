@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 
 namespace Library.Graph.ImportersExporters
 {
     public sealed class SpreadSheetFormatException : FormatException
     {
+        public SpreadSheetFormatException()
+        {
+        }
+
         public SpreadSheetFormatException(string message)
             : base(message)
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +92,7 @@ namespace Library.Graph.Generators
                 var vertex = GetRandomVertexFrom(vertices);
                 if (!vertex.Equals(last) && !IsContainsDuplicate(vertex, MapVertexAndLists[vertex].Items))
                 {
-                    MapVertexAndLists[vertex].Items.Add(last);
+                    _ = MapVertexAndLists[vertex].Items.Add(last);
                     isLastReached = true;
                 }
             }
@@ -105,12 +105,12 @@ namespace Library.Graph.Generators
             var vertices = MapVertexAndLists.Keys.ToList();
 
             //Explicit make strong connection.
-            MapVertexAndLists.Aggregate((f, s) =>
-            {
-                f.Value.Items.Add(s.Key);
-                return s;
-            });
-            MapVertexAndLists.Last().Value.Items.Add(MapVertexAndLists.First().Key);
+            _ = MapVertexAndLists.Aggregate((f, s) =>
+              {
+                  _ = f.Value.Items.Add(s.Key);
+                  return s;
+              });
+            _ = MapVertexAndLists.Last().Value.Items.Add(MapVertexAndLists.First().Key);
 
             foreach (var kv in MapVertexAndLists)
             {

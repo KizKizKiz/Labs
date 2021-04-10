@@ -22,7 +22,9 @@ namespace Library.Graph.ExampleConvertibleTypes
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+#pragma warning disable CA1508 // Avoid dead conditional code
             if (string.IsNullOrWhiteSpace(entity))
+#pragma warning restore CA1508 // Avoid dead conditional code
             {
                 throw new ArgumentException("Received empty string or string that contains only whitespaces.", nameof(entity));
             }
@@ -35,10 +37,12 @@ namespace Library.Graph.ExampleConvertibleTypes
         public int CompareTo(IntConvertible other)
             => Number.CompareTo(other.Number);
 
-        public override string ToString()
-            => Number.ToString();
+        public override string ToString() => Number.ToString();
 
-        public static implicit operator IntConvertible(int number)
-            => new IntConvertible(number);
+        public static implicit operator IntConvertible(int number) => new(number);
+
+        public override bool Equals(object? obj) => obj is IntConvertible convertible && Equals(convertible);
+
+        public override int GetHashCode() => Number.GetHashCode();
     }
 }

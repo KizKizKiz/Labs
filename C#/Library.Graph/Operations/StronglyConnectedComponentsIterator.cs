@@ -34,9 +34,7 @@ namespace Library.Graph.Operations
             }
 
             public void SetMinLLIdByLLID(StronglyConnectedComponentItem idAndLowLinkId)
-            {
-                LowLinkId = Math.Min(LowLinkId, idAndLowLinkId.LowLinkId);
-            }
+                => LowLinkId = Math.Min(LowLinkId, idAndLowLinkId.LowLinkId);
 
             public void SetMinLLIdByIndex(StronglyConnectedComponentItem idAndLowLinkId)
             {
@@ -54,7 +52,7 @@ namespace Library.Graph.Operations
             public IEnumerator<TValue> GetEnumerator()
                 => _components.GetEnumerator();
 
-            private readonly Queue<TValue> _components = new Queue<TValue>();
+            private readonly Queue<TValue> _components = new();
         }
 
         public StronglyConnectedComponentsIterator(AdjacensiesBasedGraph<TValue> graph)

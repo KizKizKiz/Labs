@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Library.Graph.Generators.Options
 {
@@ -10,7 +10,7 @@ namespace Library.Graph.Generators.Options
 
         public Func<TValue> VerticiesFactory { get; }
 
-        public GeneratorGraphOptions(
+        protected GeneratorGraphOptions(
             int verticesCount,
             int meanConnectivity,
             Func<TValue> factory)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +63,6 @@ namespace Library.Graph.Operations
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly Dictionary<TValue, IReadOnlyList<TValue>> _mapVertexItems = new Dictionary<TValue, IReadOnlyList<TValue>>();
+        private readonly Dictionary<TValue, IReadOnlyList<TValue>> _mapVertexItems = new();
     }
 }

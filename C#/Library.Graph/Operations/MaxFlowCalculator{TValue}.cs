@@ -63,6 +63,10 @@ namespace Library.Graph.Operations
                 }
                 if (item.Target is not null)
                 {
+                    if (item.Weight!.Value < 0)
+                    {
+                        throw new ArgumentException("Algorithm cannot be executed on graph with negative weight.");
+                    }
                     var forward = new FlowCapacityEdge(item.Target, 0, item.Weight!.Value, item.Source);
                     var backward = new FlowCapacityEdge(item.Source, 0, 0, item.Target);
                     _mapVertexAndEdge[forward.To].Add(backward);

@@ -9,7 +9,7 @@ namespace Library.Graph.Types
     /// Представляет элемент представления в виде списка смежности.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов.</typeparam>
-    public sealed class AdjacensyGraphItem<TValue> : IGraphViewItem<TValue>
+    public sealed class AdjacensyItem<TValue> : IGraphViewItem<TValue>
     {
         /// <summary>
         /// Возвращает вершину списка смежности.
@@ -21,14 +21,14 @@ namespace Library.Graph.Types
         /// Возвращает список вершин смежных с <see cref="Vertex"/>.
         /// </summary>
         [NotNull]
-        public IReadOnlyList<TValue> Items { get; }
+        public IReadOnlyList<(double weight, TValue value)> Items { get; }
 
         /// <summary>
         /// Конструктор элемента списка смежности.
         /// </summary>
         /// <param name="vertex">Представляет вершину списка смежности.</param>
         /// <param name="items">Представляет список вершин смежных с <param name="vertex"/>.</param>
-        public AdjacensyGraphItem(TValue vertex, IEnumerable<TValue> items)
+        public AdjacensyItem(TValue vertex, IEnumerable<(double weight, TValue value)> items)
         {
             if (items is null)
             {

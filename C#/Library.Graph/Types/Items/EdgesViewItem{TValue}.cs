@@ -4,38 +4,56 @@ using System.Diagnostics.CodeAnalysis;
 namespace Library.Graph.Types
 {
     /// <summary>
-    /// Представляет элемент представления в виде списка смежности.
+    /// Представляет элемент графа в виде ребра.
     /// </summary>
     /// <typeparam name="TValue">Тип элементов ребра.</typeparam>
-    public sealed class EdgesViewItem<TValue> : IGraphViewItem<TValue>, IEquatable<EdgesViewItem<TValue>>, IComparable<EdgesViewItem<TValue>>
+    public sealed class EdgeItem<TValue> : IGraphViewItem<TValue>, IEquatable<EdgeItem<TValue>>, IComparable<EdgeItem<TValue>>
     {
+        /// <summary>
+        /// Вершина - начало ребра.
+        /// </summary>
         [NotNull]
-        public TValue First { get; }
+        public TValue Source { get; }
 
-        public TValue? Second { get; }
+        /// <summary>
+        /// Вершина - конец ребра.
+        /// </summary>
+        [NotNull]
+        public TValue Target { get; }
 
+        /// <summary>
+        /// Вес ребра (может быть не задан).
+        /// </summary>
         public double? Weight { get; }
 
-        public EdgesViewItem(TValue first)
+        /// <summary>
+        /// Конструктор ребра.
+        /// </summary>
+        /// <param name="source">Вершина - начало ребра.</param>
+        /// <param name="target">Вершина - конец ребра.</param>
+        public EdgeItem(TValue source, TValue target)
         {
-            First = first ?? throw new ArgumentNullException(nameof(first));
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            Target = target ?? throw new ArgumentNullException(nameof(target));
         }
 
-        public EdgesViewItem(TValue first, TValue second)
-        {
-            First = first ?? throw new ArgumentNullException(nameof(first));
-            Second = second ?? throw new ArgumentNullException(nameof(second));
-        }
-
-        public EdgesViewItem(TValue first, TValue second, double weight)
-            : this(first, second)
+        /// <summary>
+        /// Конструктор ребра.
+        /// </summary>
+        /// <param name="source">Вершина - начало ребра.</param>
+        /// <param name="target">Вершина - конец ребра.</param>
+        /// <param name="target">Вес ребра.</param>
+        public EdgeItem(TValue source, TValue target, double weight)
+            : this(source, target)
         {
             Weight = weight;
         }
 
-        public override int GetHashCode() => HashCode.Combine(First, Second, Weight);
+        /// <inheritdoc/>
+        public override int GetHashCode() => HashCode.Combine(Source, Target, Weight);
 
-        public int CompareTo(EdgesViewItem<TValue>? other)
+        /// <inheritdoc/>
+        public int CompareTo(EdgeItem<TValue>? other)
         {
             if (other is null)
             {
@@ -52,11 +70,12 @@ namespace Library.Graph.Types
             return 0;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
-            => $"{First} -> {Second} ({Weight})";
+            => $"{Source} -> {Target} ({Weight})";
 
-
-        public bool Equals(EdgesViewItem<TValue>? other)
-            => other is not null && First.Equals(other.First) && Second is not null && Second.Equals(other.Second) && Weight == other.Weight;
+        /// <inheritdoc/>
+        public bool Equals(EdgeItem<TValue>? other)
+            => other is not null && Source.Equals(other.Source) && Target.Equals(other.Target) && Weight == other.Weight;
     }
 }

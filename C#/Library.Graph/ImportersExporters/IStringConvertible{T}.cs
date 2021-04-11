@@ -1,5 +1,9 @@
-﻿namespace Library.Graph.ImportersExporters
+namespace Library.Graph.ImportersExporters
 {
+    /// <summary>
+    /// Представляет контракт для конвертации в тип <typeparamref name="T"/> из строкового представления.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IStringConvertible<T>
     {
         /// <summary>
@@ -11,7 +15,5 @@
         /// Вызывается в случае неудачной попытки конвертации.
         /// </exception>
         T ConvertFromString(string entity);
-
-        bool IsNotDefaultValue { get; }
     }
 }

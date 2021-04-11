@@ -1,9 +1,9 @@
 using System;
-using System.Linq;
 
 using Library.Graph.Generators;
 using Library.Graph.Generators.Options;
 using Library.Graph.ExampleConvertibleTypes;
+using Library.Graph.Operations.Extensions;
 
 namespace Console.Graph
 {
@@ -15,20 +15,15 @@ namespace Console.Graph
 
             var generator = new TransportNetworkGraphGenerator<IntConvertible>(
                 new TransportNetworkGraphGeneratorOptions<IntConvertible>(
-                100,
-                10,
-                () => rnd.Next(100),
                 5,
-                5));
+                2,
+                () => rnd.Next(10),
+                2,
+                2,
+                (0, 15)));
+            var result = generator.Generate();
 
-            foreach (var item in Enumerable.Range(0, 10))
-            {
-                var result = generator.Generate();
-                if (result.Graph.ConnectivityType != ConnectivityType.WeaklyOrJustConnected)
-                {
-                    throw new InvalidOperationException("Trash");
-                }
-            }
+            var maxFlow = result.Graph.CalculateMaxFlow();
         }
     }
 }

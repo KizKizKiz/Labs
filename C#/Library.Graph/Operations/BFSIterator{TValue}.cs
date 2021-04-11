@@ -14,7 +14,11 @@ namespace Library.Graph.Operations
     public class BFSIterator<TValue> : IEnumerable<TValue>
          where TValue : notnull, new()
     {
-        public BFSIterator(AdjacensiesBasedGraph<TValue> graph)
+        /// <summary>
+        /// Конструктор итератора.
+        /// </summary>
+        /// <param name="graph">Граф.</param>
+        public BFSIterator(Graph<TValue> graph)
         {
             if (graph is null)
             {
@@ -25,10 +29,10 @@ namespace Library.Graph.Operations
                 throw new ArgumentException("The graph is empty.");
             }
             _mapVertexItems = graph
-                .Items
+                .Adjacensies
                 .ToDictionary(
                     item => item.Vertex,
-                    item => item.Items);
+                    item => (IReadOnlyList<TValue>)item.Items.Select(c => c.value).ToList());
         }
 
         /// <summary>

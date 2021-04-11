@@ -40,7 +40,7 @@ namespace Library.Graph.Operations
             {
                 if (idAndLowLinkId.Id is null)
                 {
-                    throw new ArgumentNullException(nameof(idAndLowLinkId.Id));
+                    throw new ArgumentNullException(nameof(idAndLowLinkId));
                 }
 
                 LowLinkId = Math.Min(LowLinkId, idAndLowLinkId.Id.Value);
@@ -55,7 +55,11 @@ namespace Library.Graph.Operations
             private readonly Queue<TValue> _components = new();
         }
 
-        public StronglyConnectedComponentsIterator(AdjacensiesBasedGraph<TValue> graph)
+        /// <summary>
+        /// Конструктор итератора максимально связных компонент.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+        public StronglyConnectedComponentsIterator(Graph<TValue> graph)
         {
             if (graph is null)
             {
@@ -67,7 +71,7 @@ namespace Library.Graph.Operations
             }
             _graph = graph;
 
-            _mapVertexAndItems = graph.Items.ToDictionary(i => i.Vertex, i => i.Items);
+            _mapVertexAndItems = graph.Adjacensies.ToDictionary(i => i.Vertex, i => (IReadOnlyList<TValue>)i.Items.Select(c => c.value).ToList());
             _mapVertexAndSCC = _graph.Items
                 .ToDictionary(
                     v => v.Vertex,
@@ -142,7 +146,7 @@ namespace Library.Graph.Operations
         private int _nextIndex;
         private readonly Stack<TValue> _vertices;
         private readonly Dictionary<TValue, StronglyConnectedComponentItem> _mapVertexAndSCC;
-        private readonly AdjacensiesBasedGraph<TValue> _graph;
+        private readonly Graph<TValue> _graph;
         private readonly Dictionary<TValue, IReadOnlyList<TValue>> _mapVertexAndItems;
     }
 }

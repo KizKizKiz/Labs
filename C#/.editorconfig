@@ -308,3 +308,6 @@ dotnet_diagnostic.IDE0046.severity = suggestion
 
 # IDE0052: Remove unread private members
 dotnet_diagnostic.IDE0052.severity = error
+
+# CA2231: Overload operator equals on overriding value type Equals
+dotnet_diagnostic.CA2231.severity = silent

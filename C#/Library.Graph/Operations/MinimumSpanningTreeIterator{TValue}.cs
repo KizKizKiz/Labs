@@ -7,10 +7,14 @@ using Library.Graph.Types;
 
 namespace Library.Graph.Operations
 {
-    public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgesViewItem<TValue>>
+    /// <summary>
+    /// Представляет итератор поиска минимального остовного дерева.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgeItem<TValue>>
          where TValue : notnull, new()
     {
-        public MinimumSpanningTreeIterator(EdgesBasedGraph<TValue> graph)
+        public MinimumSpanningTreeIterator(Graph<TValue> graph)
         {
             if (graph is null)
             {
@@ -23,19 +27,22 @@ namespace Library.Graph.Operations
             _graph = graph;
         }
 
-        public IEnumerator<EdgesViewItem<TValue>> GetEnumerator()
+        /// <summary>
+        /// Возвращает итератор поиска минимального остовного дерева.
+        /// </summary>
+        public IEnumerator<EdgeItem<TValue>> GetEnumerator()
             => SetupIterator().GetEnumerator();
 
-        private IEnumerable<EdgesViewItem<TValue>> SetupIterator()
+        private IEnumerable<EdgeItem<TValue>> SetupIterator()
         {
-            var pq = new MinPriorityQueue<EdgesViewItem<TValue>>(_graph.Items);
+            var pq = new MinPriorityQueue<EdgeItem<TValue>>(_graph.Edges);
             var uf = new UnionFindStructure<TValue>(_graph.Vertices);
             var mstCount = 0;
             while (!pq.IsEmpty() && mstCount < _graph.Vertices.Count - 1)
             {
                 var edge = pq.DeleteMin();
-                var v = edge.First;
-                var w = edge.Second ?? throw new InvalidOperationException("Received invalid view item, cause a second vertice in edge is null.");
+                var v = edge.Source;
+                var w = edge.Target ?? throw new InvalidOperationException("Received invalid view item, cause a second vertice in edge is null.");
 
                 if (uf.TryUnion(v, w))
                 {
@@ -47,6 +54,6 @@ namespace Library.Graph.Operations
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly EdgesBasedGraph<TValue> _graph;
+        private readonly Graph<TValue> _graph;
     }
 }

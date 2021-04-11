@@ -6,26 +6,35 @@ using Library.Graph.Generators.Options;
 
 namespace Library.Graph.Generators
 {
-    public class UnorientedGraphGenerator<TValue> : GraphGenerator<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue, UnorientedGraphGeneratorOptions<TValue>>
+    /// <summary>
+    /// Представляет генератор неориентированных графов.
+    /// </summary>
+    /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+    public class UnorientedGraphGenerator<TValue> : GraphGenerator<Graph<TValue>, TValue, UnorientedGraphGeneratorOptions<TValue>>
         where TValue : notnull
     {
+        /// <summary>
+        /// Конструктор генератора.
+        /// </summary>
+        /// <param name="options">Настройки генерации.</param>
         public UnorientedGraphGenerator(UnorientedGraphGeneratorOptions<TValue> orientedView)
             : base(orientedView)
         { }
 
-        protected override GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
+        /// <inheritdoc/>
+        protected override GraphGeneratingResult<Graph<TValue>, TValue> BuildCore()
         {
             var items = Options.IsConnected ? CreateConnected() : CreateNotConnected();
 
-            return new GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
-                new AdjacensiesBasedGraph<TValue>(
+            return new GraphGeneratingResult<Graph<TValue>, TValue>(
+                new Graph<TValue>(
                     items,
                     MapVertexAndLists.Keys,
                     false,
                     Options.IsConnected ? ConnectivityType.WeaklyOrJustConnected : ConnectivityType.NotConnected));
         }
 
-        private IEnumerable<AdjacensyGraphItem<TValue>> CreateConnected()
+        private IEnumerable<AdjacensyEdgeItem<TValue>> CreateConnected()
         {
             var vertices = MapVertexAndLists.Keys.ToList();
 
@@ -35,21 +44,21 @@ namespace Library.Graph.Generators
                 {
                     var vertex = GetRandomVertexFrom(vertices);
                     if (!IsLoop(vertex, kv.Key)
-                        && !IsContainsDuplicate(vertex, kv.Value.Items))
+                        && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target)))
                     {
-                        _ = kv.Value.Items.Add(vertex);
-                        if (!IsContainsDuplicate(kv.Key, MapVertexAndLists[vertex].Items))
+                        _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex));
+                        if (!IsContainsDuplicate(kv.Key, MapVertexAndLists[vertex].Items.Select(c => c.Target)))
                         {
-                            _ = MapVertexAndLists[vertex].Items.Add(kv.Key);
+                            _ = MapVertexAndLists[vertex].Items.Add(new EdgeItem<TValue>(vertex, kv.Key));
                         }
                     }
                 }
             }
 
-            return MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items));
+            return MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items));
         }
 
-        private IEnumerable<AdjacensyGraphItem<TValue>> CreateNotConnected()
+        private IEnumerable<AdjacensyEdgeItem<TValue>> CreateNotConnected()
         {
             var skippedVertices = new HashSet<TValue>();
             var skippedVerticesCount = Randomizer.FromRange(1, Options.VerticesCount);
@@ -69,19 +78,19 @@ namespace Library.Graph.Generators
                 {
                     var vertex = GetRandomVertexFrom(vertices);
                     if (!IsLoop(vertex, kv.Key)
-                        && !IsContainsDuplicate(vertex, kv.Value.Items)
+                        && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target))
                         && !skippedVertices.Contains(vertex))
                     {
-                        _ = kv.Value.Items.Add(vertex);
-                        if (!IsContainsDuplicate(kv.Key, MapVertexAndLists[vertex].Items))
+                        _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex));
+                        if (!IsContainsDuplicate(kv.Key, MapVertexAndLists[vertex].Items.Select(c => c.Target)))
                         {
-                            _ = MapVertexAndLists[vertex].Items.Add(kv.Key);
+                            _ = MapVertexAndLists[vertex].Items.Add(new EdgeItem<TValue>(vertex, kv.Key));
                         }
                     }
                 }
             }
 
-            return MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items));
+            return MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items));
         }
     }
 }

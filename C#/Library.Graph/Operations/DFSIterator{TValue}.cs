@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,11 @@ namespace Library.Graph.Operations
     public class DFSIterator<TValue> : IEnumerable<TValue>
         where TValue : notnull, new()
     {
-        public DFSIterator(AdjacensiesBasedGraph<TValue> graph)
+        /// <summary>
+        /// Конструктор итератора.
+        /// </summary>
+        /// <param name="graph">Граф.</param>
+        public DFSIterator(Graph<TValue> graph)
         {
             _graph = graph ?? throw new ArgumentNullException(nameof(graph));
         }
@@ -23,6 +27,7 @@ namespace Library.Graph.Operations
         /// Возвращает итератор обхода вершин.
         /// </summary>
         public IEnumerator<TValue> GetEnumerator() => SetupIterator().GetEnumerator();
+
         private IEnumerable<TValue> SetupIterator()
         {
             var mapVertexAndIsMarked = _graph.Items.ToDictionary(kv => kv.Vertex, _ => false);
@@ -37,11 +42,11 @@ namespace Library.Graph.Operations
                 passedVertices.Add(vertex);
                 mapVertexAndIsMarked[vertex] = true;
 
-                foreach (var item in _graph.Items.First(c => c.Vertex.Equals(vertex)).Items)
+                foreach (var value in _graph.Items.Single(c => c.Vertex.Equals(vertex)).Items.Select(c => c.Target))
                 {
-                    if (!mapVertexAndIsMarked[item])
+                    if (!mapVertexAndIsMarked[value])
                     {
-                        WalkBasedOn(item);
+                        WalkBasedOn(value);
                     }
                 }
             }
@@ -49,6 +54,6 @@ namespace Library.Graph.Operations
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly AdjacensiesBasedGraph<TValue> _graph;
+        private readonly Graph<TValue> _graph;
     }
 }

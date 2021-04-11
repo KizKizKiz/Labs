@@ -1,9 +1,9 @@
 namespace Library.Graph.Types
 {
     /// <summary>
-    /// Представляет контракт ребра в представлении.
+    /// Представляет контракт элемента в графе.
     /// </summary>
-    /// <typeparam name="TView">Тип представления графа.</typeparam>
+    /// <typeparam name="TValue">Тип данных в элементе графа.</typeparam>
     public interface IGraphViewItem<TValue>
     {
     }

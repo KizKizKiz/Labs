@@ -8,14 +8,23 @@ using Library.Graph.Generators.Options;
 
 namespace Library.Graph.Generators
 {
-    public class OrientedGraphGenerator<TValue> : GraphGenerator<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue, OrientedGraphGeneratorOptions<TValue>>
+    /// <summary>
+    /// Представляет генератор ориентированных графов.
+    /// </summary>
+    /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+    public class OrientedGraphGenerator<TValue> : GraphGenerator<Graph<TValue>, TValue, OrientedGraphGeneratorOptions<TValue>>
         where TValue : notnull
     {
-        public OrientedGraphGenerator(OrientedGraphGeneratorOptions<TValue> orientedView)
-            : base(orientedView)
+        /// <summary>
+        /// Конструктор генератора.
+        /// </summary>
+        /// <param name="options">Настройки генерации.</param>
+        public OrientedGraphGenerator(OrientedGraphGeneratorOptions<TValue> options)
+            : base(options)
         { }
 
-        protected override GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
+        /// <inheritdoc/>
+        protected override GraphGeneratingResult<Graph<TValue>, TValue> BuildCore()
         {
             Debug.Assert(Enum.IsDefined(Options.Connectivity), "Fail never happens.");
 
@@ -27,11 +36,11 @@ namespace Library.Graph.Generators
                 _ => throw new InvalidOperationException($"Received unknown connectivity type '{Options.Connectivity}'.")
             };
 
-            return new GraphGeneratingResult<AdjacensiesBasedGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
-                new AdjacensiesBasedGraph<TValue>(items.ToList(), MapVertexAndLists.Keys, true, Options.Connectivity));
+            return new GraphGeneratingResult<Graph<TValue>, TValue>(
+                new Graph<TValue>(items.ToList(), MapVertexAndLists.Keys, true, Options.Connectivity));
         }
 
-        private IEnumerable<AdjacensyGraphItem<TValue>> CreateNotConnected()
+        private IEnumerable<AdjacensyEdgeItem<TValue>> CreateNotConnected()
         {
             var skippedVertices = new HashSet<TValue>();
             var skippedVerticesCount = Randomizer.FromRange(1, Options.VerticesCount);
@@ -53,19 +62,20 @@ namespace Library.Graph.Generators
                     {
                         var vertex = GetRandomVertexFrom(vertices);
                         if (!IsLoop(vertex, kv.Key)
-                            && !IsContainsDuplicate(vertex, kv.Value.Items)
+                            && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target))
                             && !skippedVertices.Contains(vertex))
                         {
-                            _ = kv.Value.Items.Add(vertex);
+                            var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                            _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex, weight));
                         }
                     }
                 }
             }
 
-            return MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items));
+            return MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items));
         }
 
-        private IEnumerable<AdjacensyGraphItem<TValue>> CreateWeaklyOrJustConnected()
+        private IEnumerable<AdjacensyEdgeItem<TValue>> CreateWeaklyOrJustConnected()
         {
             var vertices = MapVertexAndLists.Keys.ToList();
 
@@ -77,40 +87,47 @@ namespace Library.Graph.Generators
                 {
                     var vertex = GetRandomVertexFrom(vertices);
                     if (!IsLoop(vertex, kv.Key)
-                        && !IsContainsDuplicate(vertex, kv.Value.Items))
+                        && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target)))
                     {
                         if (vertex.Equals(last))
                         {
                             isLastReached = true;
                         }
-                        _ = kv.Value.Items.Add(vertex);
+                        var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                        _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex, weight));
                     }
                 }
             }
             while (!isLastReached)
             {
                 var vertex = GetRandomVertexFrom(vertices);
-                if (!vertex.Equals(last) && !IsContainsDuplicate(vertex, MapVertexAndLists[vertex].Items))
+                if (!vertex.Equals(last) && !IsContainsDuplicate(vertex, MapVertexAndLists[vertex].Items.Select(c => c.Target)))
                 {
-                    _ = MapVertexAndLists[vertex].Items.Add(last);
+                    var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                    _ = MapVertexAndLists[vertex].Items.Add(new EdgeItem<TValue>(vertex, last, weight));
                     isLastReached = true;
                 }
             }
 
-            return MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items));
+            return MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items));
         }
 
-        private IEnumerable<AdjacensyGraphItem<TValue>> CreateStronglyConnected()
+        private IEnumerable<AdjacensyEdgeItem<TValue>> CreateStronglyConnected()
         {
             var vertices = MapVertexAndLists.Keys.ToList();
 
             //Explicit make strong connection.
             _ = MapVertexAndLists.Aggregate((f, s) =>
               {
-                  _ = f.Value.Items.Add(s.Key);
+                  var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                  _ = f.Value.Items.Add(new EdgeItem<TValue>(f.Key, s.Key, weight));
                   return s;
               });
-            _ = MapVertexAndLists.Last().Value.Items.Add(MapVertexAndLists.First().Key);
+
+            var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+
+            var lastPair = MapVertexAndLists.Last();
+            _ = lastPair.Value.Items.Add(new EdgeItem<TValue>(lastPair.Key, MapVertexAndLists.First().Key, weight));
 
             foreach (var kv in MapVertexAndLists)
             {
@@ -118,14 +135,15 @@ namespace Library.Graph.Generators
                 {
                     var vertex = GetRandomVertexFrom(vertices);
                     if (!IsLoop(vertex, kv.Key)
-                        && !IsContainsDuplicate(vertex, kv.Value.Items))
+                        && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target)))
                     {
-                        _ = kv.Value.Items.Add(vertex);
+                        weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                        _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex, weight));
                     }
                 }
             }
 
-            return MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items));
+            return MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items));
         }
     }
 }

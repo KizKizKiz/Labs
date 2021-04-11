@@ -6,14 +6,23 @@ using Library.Graph.Generators.Options;
 
 namespace Library.Graph.Generators
 {
-    public sealed class TransportNetworkGraphGenerator<TValue> : GraphGenerator<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue, TransportNetworkGraphGeneratorOptions<TValue>>
+    /// <summary>
+    /// Представляет генератор транспортных сетей.
+    /// </summary>
+    /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+    public sealed class TransportNetworkGraphGenerator<TValue> : GraphGenerator<TransportNetworkGraph<TValue>, TValue, TransportNetworkGraphGeneratorOptions<TValue>>
         where TValue : notnull
     {
+        /// <summary>
+        /// Конструктор генератора.
+        /// </summary>
+        /// <param name="options">Настройки генерации.</param>
         public TransportNetworkGraphGenerator(TransportNetworkGraphGeneratorOptions<TValue> options)
             : base(options)
         { }
 
-        protected override GraphGeneratingResult<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue> BuildCore()
+        /// <inheritdoc/>
+        protected override GraphGeneratingResult<TransportNetworkGraph<TValue>, TValue> BuildCore()
         {
             _vertexReachTargetCount = 0; //every build need to wipe count
 
@@ -23,9 +32,9 @@ namespace Library.Graph.Generators
             InitSource();
             InitBody();
 
-            return new GraphGeneratingResult<TransportNetworkGraph<TValue>, AdjacensyGraphItem<TValue>, TValue>(
+            return new GraphGeneratingResult<TransportNetworkGraph<TValue>, TValue>(
                 new TransportNetworkGraph<TValue>(
-                    MapVertexAndLists.Select(kv => new AdjacensyGraphItem<TValue>(kv.Key, kv.Value.Items)),
+                    MapVertexAndLists.Select(kv => new AdjacensyEdgeItem<TValue>(kv.Key, kv.Value.Items)),
                     MapVertexAndLists.Keys));
         }
 
@@ -44,11 +53,14 @@ namespace Library.Graph.Generators
             var stronglyConnectedBody = MapVertexAndLists.Where(c => !c.Key.Equals(_source) && !c.Key.Equals(_target));
             _ = stronglyConnectedBody.Aggregate((f, s) =>
               {
-                  _ = f.Value.Items.Add(s.Key);
+                  var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                  _ = f.Value.Items.Add(new EdgeItem<TValue>(f.Key, s.Key, weight));
                   return s;
               });
+            var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
 
-            _ = stronglyConnectedBody.Last().Value.Items.Add(stronglyConnectedBody.First().Key);
+            var lastPair = stronglyConnectedBody.Last();
+            _ = lastPair.Value.Items.Add(new EdgeItem<TValue>(lastPair.Key, stronglyConnectedBody.First().Key, weight));
 
             foreach (var kv in stronglyConnectedBody)
             {
@@ -57,11 +69,12 @@ namespace Library.Graph.Generators
                 {
                     var vertex = GetRandomVertexFrom(_vertices);
                     if (!IsLoop(vertex, kv.Key)
-                        && !IsContainsDuplicate(vertex, kv.Value.Items)
+                        && !IsContainsDuplicate(vertex, kv.Value.Items.Select(c => c.Target))
                         && !vertex.Equals(_source))
                     {
                         _mapVertexAndIsReached[vertex] = true;
-                        _ = kv.Value.Items.Add(vertex);
+                        weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                        _ = kv.Value.Items.Add(new EdgeItem<TValue>(kv.Key, vertex, weight));
                     }
                     if (vertex.Equals(_target))
                     {
@@ -73,9 +86,10 @@ namespace Library.Graph.Generators
             while (_vertexReachTargetCount < Options.TargetMinInVertices)
             {
                 var vertex = GetRandomVertexFrom(_vertices);
-                if (!vertex.Equals(_target) && !MapVertexAndLists[vertex].Items.Contains(_target))
+                if (!vertex.Equals(_target) && !MapVertexAndLists[vertex].Items.Select(c => c.Target).Contains(_target))
                 {
-                    _ = MapVertexAndLists[vertex].Items.Add(_target);
+                    weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                    _ = MapVertexAndLists[vertex].Items.Add(new EdgeItem<TValue>(vertex, _target, weight));
                     _vertexReachTargetCount++;
                 }
             }
@@ -89,11 +103,12 @@ namespace Library.Graph.Generators
             {
                 var vertex = GetRandomVertexFrom(_vertices);
                 if (!IsLoop(vertex, _source)
-                    && !IsContainsDuplicate(vertex, MapVertexAndLists[_source].Items)
+                    && !IsContainsDuplicate(vertex, MapVertexAndLists[_source].Items.Select(c => c.Target))
                     && !vertex.Equals(_target))
                 {
                     _mapVertexAndIsReached[vertex] = true;
-                    _ = MapVertexAndLists[_source].Items.Add(vertex);
+                    var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                    _ = MapVertexAndLists[_source].Items.Add(new EdgeItem<TValue>(_source, vertex, weight));
                 }
             }
         }

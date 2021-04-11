@@ -8,12 +8,9 @@ namespace Library.Graph.ExampleConvertibleTypes
     {
         public int Number { get; }
 
-        public bool IsNotDefaultValue { get; }
-
         public IntConvertible(int number)
         {
             Number = number;
-            IsNotDefaultValue = true;
         }
 
         public IntConvertible ConvertFromString(string entity)

@@ -40,18 +40,18 @@ namespace Library.Graph.Types
 
         private void ValidateItemsAndSetSourceAndTarget()
         {
-            var targets = Items.Where(c => !c.Items.Any()).ToHashSet();
+            var targets = Items.Where(c => !c.Value.Items.Any()).ToHashSet();
             if (targets.Count != 1)
             {
                 throw new InvalidOperationException($"The algorithm support transport network graph with only one 'TARGET' (Detected: {targets.Count})");
             }
-            var vertices = Items.Select(c => c.Items.Select(c => c.Target)).SelectMany(c => c).ToHashSet();
+            var vertices = Items.Select(c => c.Value.Items.Select(c => c.Target)).SelectMany(c => c).ToHashSet();
             if (vertices.Count != Vertices.Count - 1)
             {
                 throw new InvalidOperationException($"The algorithm support transport network graph with only one 'SOURCE' (Detected: {vertices.Count})");
             }
 
-            Target = targets.Single().Vertex;
+            Target = targets.Single().Key;
             Source = Vertices.Except(vertices.Select(c => c)).Single();
         }
     }

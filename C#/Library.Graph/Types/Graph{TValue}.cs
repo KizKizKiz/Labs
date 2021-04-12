@@ -30,8 +30,8 @@ namespace Library.Graph.Types
 
             private static ConnectivityType DeterminateConnectivityForNotOrientedCore(Graph<TValue> graph)
             {
-                var mapVertexAndItems = graph.Items.ToDictionary(i => i.Vertex, i => i.Items.Select(c => c.Target));
-                var mapVertexAndIsMarked = graph.Items.ToDictionary(v => v.Vertex, _ => false);
+                var mapVertexAndItems = graph.Items.ToDictionary(i => i.Key, i => i.Value.Items.Select(c => c.Target));
+                var mapVertexAndIsMarked = graph.Items.ToDictionary(v => v.Key, _ => false);
 
                 var verticesQueue = new Queue<TValue>();
 
@@ -60,8 +60,8 @@ namespace Library.Graph.Types
             {
                 var mapVertexAndItems = graph.Items
                     .ToDictionary(
-                    i => i.Vertex,
-                    i => (IsAllReached: false, i.Items));
+                    i => i.Key,
+                    i => (IsAllReached: false, i.Value.Items));
 
                 var vertices = mapVertexAndItems.Keys.ToHashSet();
 
@@ -69,13 +69,13 @@ namespace Library.Graph.Types
                 {
                     var mapVertexAndIsMarked = graph.Items
                         .ToDictionary(
-                        v => v.Vertex,
+                        v => v.Key,
                         _ => false);
 
-                    mapVertexAndIsMarked[adjacensy.Vertex] = true;
+                    mapVertexAndIsMarked[adjacensy.Key] = true;
 
                     var verticesQueue = new Queue<TValue>();
-                    verticesQueue.Enqueue(adjacensy.Vertex);
+                    verticesQueue.Enqueue(adjacensy.Key);
 
                     while (verticesQueue.Any())
                     {
@@ -93,7 +93,7 @@ namespace Library.Graph.Types
                     }
                     if (mapVertexAndIsMarked.Values.All((c) => c))
                     {
-                        mapVertexAndItems[adjacensy.Vertex] = (true, mapVertexAndItems[adjacensy.Vertex].Items);
+                        mapVertexAndItems[adjacensy.Key] = (true, mapVertexAndItems[adjacensy.Key].Items);
                     }
                 }
                 if (vertices.Count != 0)
@@ -107,17 +107,17 @@ namespace Library.Graph.Types
         }
 
         /// <summary>
-        /// Список смежностей, который состоит из ребер.
+        /// Словарь из ключа в виде вершины и значения в виде списка смежностей, который состоит из ребер.
         /// </summary>
-        public IReadOnlyList<AdjacensyEdgeItem<TValue>> Items { get; }
+        public IReadOnlyDictionary<TValue, AdjacensyEdgeItem<TValue>> Items { get; }
 
         /// <summary>
-        /// Список смежностей.
+        /// Итератор элементов смежностей.
         /// </summary>
         public IEnumerable<AdjacensyItem<TValue>> Adjacensies => SetupAdjacensiesIterator();
 
         /// <summary>
-        /// Список ребер.
+        /// Итератор ребер.
         /// </summary>
         public IEnumerable<EdgeItem<TValue>> Edges => SetupEdgesIterator();
 
@@ -170,10 +170,8 @@ namespace Library.Graph.Types
             }
 
             Vertices = vertices.ToList();
-            Items = items.ToList();
+            Items = items.ToDictionary(c => c.Vertex);
             IsOriented = isOriented;
-
-            _mapVertexAndAdjacencies = Items.ToDictionary(c => c.Vertex);
 
             VerifyDirection();
             SetIsWeighted();
@@ -251,16 +249,16 @@ namespace Library.Graph.Types
             {
                 throw new ArgumentNullException(nameof(vertex));
             }
-            return _mapVertexAndAdjacencies.ContainsKey(vertex) ?
-                _mapVertexAndAdjacencies[vertex].Items :
+            return Items.ContainsKey(vertex) ?
+                Items[vertex].Items :
                 throw new KeyNotFoundException("Vertex is not presented in the graph.");
         }
 
         private void SetIsWeighted()
         {
-            var isAllWeighted = Items.SelectMany(c => c.Items).All(c => c.Weight is not null);
+            var isAllWeighted = Items.Values.SelectMany(c => c.Items).All(c => c.Weight is not null);
 
-            if (!isAllWeighted && Items.SelectMany(c => c.Items).Any(c => c.Weight is not null))
+            if (!isAllWeighted && Items.Values.SelectMany(c => c.Items).Any(c => c.Weight is not null))
             {
                 throw new ArgumentException("Graph contains a weighted edge and non weighted. Assign weight to all edges or remove weight from it.");
             }
@@ -271,9 +269,9 @@ namespace Library.Graph.Types
         {
             foreach (var adjacensy in Items)
             {
-                foreach (var edge in adjacensy.Items)
+                foreach (var edge in adjacensy.Value.Items)
                 {
-                    if (!_mapVertexAndAdjacencies[edge.Target].Items.Contains(ReverseEdge(edge)) && !IsOriented)
+                    if (!Items[edge.Target].Items.Contains(ReverseEdge(edge)) && !IsOriented)
                     {
                         throw new ArgumentException($"Graph is not an undirected.", nameof(IsOriented));
                     }
@@ -295,22 +293,20 @@ namespace Library.Graph.Types
 
 
         private IEnumerable<EdgeItem<TValue>> SetupEdgesIterator()
-            => Items.Select(c => c.Items).SelectMany(c => c);
+            => Items.Values.Select(c => c.Items).SelectMany(c => c);
 
         private IEnumerable<AdjacensyItem<TValue>> SetupAdjacensiesIterator()
         {
             var mapVertexAndList = new Dictionary<TValue, List<(double weight, TValue value)>>();
             foreach (var item in Items)
             {
-                if (!mapVertexAndList.ContainsKey(item.Vertex))
+                if (!mapVertexAndList.ContainsKey(item.Value.Vertex))
                 {
-                    mapVertexAndList[item.Vertex] = new List<(double weight, TValue value)>();
+                    mapVertexAndList[item.Value.Vertex] = new List<(double weight, TValue value)>();
                 }
-                mapVertexAndList[item.Vertex].AddRange(item.Items.Select(c => (weight: c.Weight ?? 0, value: c.Target)));
+                mapVertexAndList[item.Value.Vertex].AddRange(item.Value.Items.Select(c => (weight: c.Weight ?? 0, value: c.Target)));
             }
             return mapVertexAndList.Select(c => new AdjacensyItem<TValue>(c.Key, c.Value));
         }
-
-        private readonly Dictionary<TValue, AdjacensyEdgeItem<TValue>> _mapVertexAndAdjacencies;
     }
 }

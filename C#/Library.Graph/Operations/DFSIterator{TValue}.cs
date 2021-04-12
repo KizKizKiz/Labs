@@ -30,10 +30,10 @@ namespace Library.Graph.Operations
 
         private IEnumerable<TValue> SetupIterator()
         {
-            var mapVertexAndIsMarked = _graph.Items.ToDictionary(kv => kv.Vertex, _ => false);
+            var mapVertexAndIsMarked = _graph.Items.ToDictionary(kv => kv.Key, _ => false);
             var passedVertices = new List<TValue>();
 
-            WalkBasedOn(_graph.Items[0].Vertex);
+            WalkBasedOn(_graph.Items.Keys.First());
 
             return passedVertices;
 
@@ -42,7 +42,7 @@ namespace Library.Graph.Operations
                 passedVertices.Add(vertex);
                 mapVertexAndIsMarked[vertex] = true;
 
-                foreach (var value in _graph.Items.Single(c => c.Vertex.Equals(vertex)).Items.Select(c => c.Target))
+                foreach (var value in _graph.Items[vertex].Items.Select(c => c.Target))
                 {
                     if (!mapVertexAndIsMarked[value])
                     {

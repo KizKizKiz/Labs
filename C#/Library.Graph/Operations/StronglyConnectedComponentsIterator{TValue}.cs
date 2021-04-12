@@ -74,7 +74,7 @@ namespace Library.Graph.Operations
             _mapVertexAndItems = graph.Adjacensies.ToDictionary(i => i.Vertex, i => (IReadOnlyList<TValue>)i.Items.Select(c => c.value).ToList());
             _mapVertexAndSCC = _graph.Items
                 .ToDictionary(
-                    v => v.Vertex,
+                    v => v.Key,
                     _ => new StronglyConnectedComponentItem());
 
             _vertices = new Stack<TValue>();

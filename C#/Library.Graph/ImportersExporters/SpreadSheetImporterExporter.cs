@@ -68,9 +68,10 @@ namespace Library.Graph.ImportersExporters
             var rowsProcessed = 0;
             for (var i = 0; ;)
             {
-                if (graph.Items[rowsProcessed].Items.Any())
+                var adjacensies = graph.Items.Values.ToList();
+                if (adjacensies[rowsProcessed].Items.Any())
                 {
-                    foreach (var edge in graph.Items[rowsProcessed].Items)
+                    foreach (var edge in adjacensies[rowsProcessed].Items)
                     {
                         worksheet.Cells[i + 2, 1].Value = edge.Source.ToString();
                         worksheet.Cells[i + 2, 2].Value = edge.Target.ToString();
@@ -81,7 +82,7 @@ namespace Library.Graph.ImportersExporters
                 }
                 else
                 {
-                    worksheet.Cells[i++ + 2, 1].Value = graph.Items[rowsProcessed].Vertex.ToString();
+                    worksheet.Cells[i++ + 2, 1].Value = adjacensies[rowsProcessed].Vertex.ToString();
                 }
                 if (graph.Items.Count == ++rowsProcessed)
                 {

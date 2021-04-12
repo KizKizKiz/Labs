@@ -23,6 +23,22 @@ namespace Console.Graph
                 (0, 15)));
             var result = generator.Generate();
 
+            foreach (var item in result.Graph.Items.Values)
+            {
+                System.Console.WriteLine(item);
+            }
+            System.Console.WriteLine();
+
+            foreach (var item in result.Graph.Edges)
+            {
+                System.Console.WriteLine(item);
+            }
+
+            foreach (var item in result.Graph.Adjacensies)
+            {
+                System.Console.WriteLine(item);
+            }
+
             var maxFlow = result.Graph.CalculateMaxFlow();
         }
     }

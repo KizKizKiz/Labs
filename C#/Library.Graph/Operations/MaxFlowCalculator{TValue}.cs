@@ -52,8 +52,8 @@ namespace Library.Graph.Operations
                 throw new ArgumentException("The graph items collection is empty.", nameof(graph));
             }
             _graph = graph;
-            _mapVertexAndEdge = _graph.Items.ToDictionary(c => c.Vertex, (c) => new List<FlowCapacityEdge>());
-            _mapVertexAndLevel = _graph.Items.ToDictionary(c => c.Vertex, (_) => -1);
+            _mapVertexAndEdge = _graph.Items.ToDictionary(c => c.Key, (c) => new List<FlowCapacityEdge>());
+            _mapVertexAndLevel = _graph.Items.ToDictionary(c => c.Key, (_) => -1);
 
             foreach (var item in _graph.Edges)
             {

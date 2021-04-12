@@ -39,7 +39,10 @@ namespace Console.Graph
                 System.Console.WriteLine(item);
             }
 
-            var maxFlow = result.Graph.CalculateMaxFlow();
+            foreach (var e in result.Graph.SetupDijkstraWalking())
+            {
+                System.Console.WriteLine(e.Source + "->" + e.Target + "==" + e.Weight);
+            }
         }
     }
 }

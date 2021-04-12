@@ -76,5 +76,19 @@ namespace Library.Graph.Operations.Extensions
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new MaxFlowCalculator<TValue>(graph).Calculate();
         }
+
+        /// <summary>
+        /// Возвращает итератор кратчайшего пути.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+        /// <param name="graph">Граф.</param>
+        /// <returns></returns>
+        public static IEnumerable<EdgeItem<TValue>> SetupDijkstraWalking<TValue>(
+            this TransportNetworkGraph<TValue> graph)
+            where TValue : notnull, IComparable<TValue>, new()
+        {
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new DijkstraShortestPathIterator<TValue>(graph);
+        }
     }
 }

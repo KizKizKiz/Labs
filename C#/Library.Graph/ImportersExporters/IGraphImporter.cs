@@ -16,7 +16,16 @@ namespace Library.Graph.ImportersExporters
         /// <typeparam name="TValue">Тип элементов графа.</typeparam>
         /// <param name="stream">Поток чтения графа.</param>
         /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
-        Task<Graph<TValue>> ImportAsync<TValue>(Stream stream)
+        Task<Graph<TValue>> ImportGraphAsync<TValue>(Stream stream)
+            where TValue : notnull, IStringConvertible<TValue>, new();
+
+        /// <summary>
+        /// Возвращает транспортную сеть из <paramref name="stream"/>.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов сети.</typeparam>
+        /// <param name="stream">Поток чтения графа.</param>
+        /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
+        Task<TransportNetworkGraph<TValue>> ImportTransportNetworkAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, new();
     }
 }

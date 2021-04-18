@@ -289,7 +289,9 @@ namespace Library.Graph.Types
         }
 
         private static EdgeItem<TValue> ReverseEdge(EdgeItem<TValue> edge)
-            => new(edge.Target, edge.Source, edge.Weight ?? 0);
+            => edge.Weight is null ?
+            new(edge.Target, edge.Source) :
+            new(edge.Target, edge.Source, edge.Weight.Value);
 
 
         private IEnumerable<EdgeItem<TValue>> SetupEdgesIterator()

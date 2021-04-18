@@ -90,5 +90,33 @@ namespace Library.Graph.Operations.Extensions
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new DijkstraShortestPathIterator<TValue>(graph);
         }
+
+        /// <summary>
+        /// Возвращает максимальное по мощности паросочетание.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+        /// <param name="graph">Граф.</param>
+        /// <returns></returns>
+        public static int MaxMatching<TValue>(
+            this BipartiteGraph<TValue> graph,
+            Func<TValue> fakeVertexGenerator)
+            where TValue : notnull, IComparable<TValue>, new()
+        {
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new MaxMatchingCalculator<TValue>(graph, fakeVertexGenerator).MaxMatching();
+        }
+
+        /// <summary>
+        /// Возвращает итератор реберной раскраски.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+        /// <param name="graph">Граф.</param>
+        public static IEnumerable<(EdgeItem<TValue> Edge, int Color)> SetupEdgeColoringIterator<TValue>(
+            this Graph<TValue> graph)
+            where TValue : notnull, IComparable<TValue>, new()
+        {
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new EdgeColoringIterator<TValue>(graph);
+        }
     }
 }

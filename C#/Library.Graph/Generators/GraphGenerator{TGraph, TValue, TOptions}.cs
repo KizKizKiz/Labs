@@ -104,7 +104,7 @@ namespace Library.Graph.Generators
         /// <summary>
         /// Словарь, в котором ключом выступает вершина, а значением является кортеж из количества элементов и контейнера элементов.
         /// </summary>
-        protected Dictionary<TValue, (int Count, HashSet<EdgeItem<TValue>> Items)> MapVertexAndLists { get; private set; } = new();
+        protected IReadOnlyDictionary<TValue, (int Count, HashSet<EdgeItem<TValue>> Items)> MapVertexAndLists { get; private set; } = default!;
 
         /// <summary>
         /// Строит граф на основе словаря <see cref="MapVertexAndLists"/> и возвращает результат генерации.

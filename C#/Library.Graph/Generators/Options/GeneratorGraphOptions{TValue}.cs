@@ -49,7 +49,7 @@ namespace Library.Graph.Generators.Options
             {
                 throw new ArgumentException($"Mean connectivity must be greater than zero and less than {nameof(verticesCount)}.", nameof(meanConnectivity));
             }
-            if (range.min >= range.max)
+            if (range.min > range.max)
             {
                 throw new ArgumentException("Range must contains minimum, which less than maximum.", nameof(range));
             }

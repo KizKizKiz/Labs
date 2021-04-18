@@ -253,6 +253,9 @@ dotnet_analyzer_diagnostic.category-design.severity = none
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = error
 
+# CA1814: Prefer jagged arrays over multidimensional
+dotnet_diagnostic.CA1814.severity = none
+
 # CA1014: Mark assemblies with CLSCompliantAttribute
 dotnet_diagnostic.CA1014.severity = none
 

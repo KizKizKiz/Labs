@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace Library.Graph.ImportersExporters
         /// <param name="stream">Поток чтения графа.</param>
         /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
         Task<Graph<TValue>> ImportGraphAsync<TValue>(Stream stream)
-            where TValue : notnull, IStringConvertible<TValue>, new();
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new();
 
         /// <summary>
         /// Возвращает транспортную сеть из <paramref name="stream"/>.
@@ -26,6 +28,6 @@ namespace Library.Graph.ImportersExporters
         /// <param name="stream">Поток чтения графа.</param>
         /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
         Task<TransportNetworkGraph<TValue>> ImportTransportNetworkAsync<TValue>(Stream stream)
-            where TValue : notnull, IStringConvertible<TValue>, new();
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new();
     }
 }

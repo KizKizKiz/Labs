@@ -52,7 +52,7 @@ namespace Library.Graph.ImportersExporters
 
         /// <inheritdoc/>
         public async Task ExportAsync<TValue>(Graph<TValue> graph)
-            where TValue : notnull, IStringConvertible<TValue>
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, IStringConvertible<TValue>
         {
             ValidateGraph(graph);
 
@@ -96,7 +96,7 @@ namespace Library.Graph.ImportersExporters
 
         /// <inheritdoc/>
         public async Task<TransportNetworkGraph<TValue>> ImportTransportNetworkAsync<TValue>(Stream stream)
-            where TValue : notnull, IStringConvertible<TValue>, new()
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             var graph = await ImportGraphAsync<TValue>(stream);
             return new TransportNetworkGraph<TValue>(graph.Items.Values, graph.Vertices);
@@ -104,7 +104,7 @@ namespace Library.Graph.ImportersExporters
 
         /// <inheritdoc/>
         public Task<Graph<TValue>> ImportGraphAsync<TValue>(Stream stream)
-            where TValue : notnull, IStringConvertible<TValue>, new()
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             if (stream is null)
             {
@@ -123,7 +123,7 @@ namespace Library.Graph.ImportersExporters
         }
 
         private Graph<TValue> CreateGraph<TValue>(ExcelWorksheet worksheet)
-            where TValue : notnull, IStringConvertible<TValue>, new()
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             var mapVertexAndEdges = new Dictionary<TValue, List<EdgeItem<TValue>>>();
             var edgeType = string.Empty;
@@ -259,7 +259,7 @@ namespace Library.Graph.ImportersExporters
         }
 
         private static void ValidateGraph<TValue>(Graph<TValue> graph)
-            where TValue : notnull
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>
         {
             if (graph is null)
             {

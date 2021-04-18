@@ -13,7 +13,7 @@ namespace Library.Graph.Generators
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class OrientedGraphGenerator<TValue> : GraphGenerator<Graph<TValue>, TValue, OrientedGraphGeneratorOptions<TValue>>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Конструктор генератора.

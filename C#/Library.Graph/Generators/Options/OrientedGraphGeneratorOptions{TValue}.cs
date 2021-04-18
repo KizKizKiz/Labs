@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Library.Graph.Generators.Options
@@ -8,6 +9,7 @@ namespace Library.Graph.Generators.Options
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public sealed class OrientedGraphGeneratorOptions<TValue> : GeneratorGraphOptions<TValue>
+        where TValue : IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Тип связности.

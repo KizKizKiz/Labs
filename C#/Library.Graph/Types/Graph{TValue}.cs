@@ -12,7 +12,7 @@ namespace Library.Graph.Types
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class Graph<TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         private static class GraphDeterminantHelper
         {

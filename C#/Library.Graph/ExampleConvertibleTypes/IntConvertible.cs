@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using Library.Graph.ImportersExporters;
 
 namespace Library.Graph.ExampleConvertibleTypes
 {
-    public readonly struct IntConvertible : IStringConvertible<IntConvertible>, IEquatable<IntConvertible>, IComparable<IntConvertible>
+    public readonly struct IntConvertible : IStringConvertible<IntConvertible>, IEquatable<IntConvertible>, IEqualityComparer<IntConvertible>, IComparable<IntConvertible>
     {
         public int Number { get; }
 
@@ -39,5 +41,9 @@ namespace Library.Graph.ExampleConvertibleTypes
         public override bool Equals(object? obj) => obj is IntConvertible convertible && Equals(convertible);
 
         public override int GetHashCode() => Number.GetHashCode();
+
+        public bool Equals(IntConvertible x, IntConvertible y) => x.Equals(y);
+
+        public int GetHashCode([DisallowNull] IntConvertible obj) => GetHashCode();
     }
 }

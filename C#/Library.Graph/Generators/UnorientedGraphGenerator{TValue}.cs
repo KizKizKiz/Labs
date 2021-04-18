@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Library.Graph.Types;
 using Library.Graph.Generators.Options;
+using System;
 
 namespace Library.Graph.Generators
 {
@@ -11,7 +12,7 @@ namespace Library.Graph.Generators
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class UnorientedGraphGenerator<TValue> : GraphGenerator<Graph<TValue>, TValue, UnorientedGraphGeneratorOptions<TValue>>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Конструктор генератора.

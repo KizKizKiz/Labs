@@ -12,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class EdgeColoringIterator<TValue> : IEnumerable<(EdgeItem<TValue>, int)>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         private class EdgeAndColor
         {

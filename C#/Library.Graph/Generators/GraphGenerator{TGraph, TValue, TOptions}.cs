@@ -16,7 +16,7 @@ namespace Library.Graph.Generators
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     /// <typeparam name="TOptions">Тип настроек для генерации графа.</typeparam>
     public abstract class GraphGenerator<TGraph, TValue, TOptions> : IGraphGenerator<TGraph, TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
         where TGraph : Graph<TValue>
         where TOptions : GeneratorGraphOptions<TValue>
     {

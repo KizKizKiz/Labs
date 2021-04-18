@@ -15,7 +15,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static IEnumerable<TValue> SetupBFSWalking<TValue>(
             this Graph<TValue> graph)
-            where TValue : notnull, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ?
                 throw new ArgumentNullException(nameof(graph))
@@ -29,7 +29,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static IEnumerable<TValue> SetupDFSWalking<TValue>(
             this Graph<TValue> graph)
-            where TValue : notnull, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ?
                 throw new ArgumentNullException(nameof(graph))
@@ -43,7 +43,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static IEnumerable<EdgeItem<TValue>> SetupMSTWalking<TValue>(
             this Graph<TValue> graph)
-            where TValue : notnull, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             if (graph is null)
             {
@@ -59,7 +59,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static IEnumerable<IEnumerable<TValue>> SetupSCCWalking<TValue>(
             this Graph<TValue> graph)
-            where TValue : notnull, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new StronglyConnectedComponentsIterator<TValue>(graph);
@@ -72,7 +72,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static double CalculateMaxFlow<TValue>(
             this TransportNetworkGraph<TValue> graph)
-            where TValue : notnull, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new MaxFlowCalculator<TValue>(graph).Calculate();
@@ -86,7 +86,7 @@ namespace Library.Graph.Operations.Extensions
         /// <returns></returns>
         public static IEnumerable<EdgeItem<TValue>> SetupDijkstraWalking<TValue>(
             this TransportNetworkGraph<TValue> graph)
-            where TValue : notnull, IComparable<TValue>, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, IComparable<TValue>, new()
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new DijkstraShortestPathIterator<TValue>(graph);
@@ -123,7 +123,7 @@ namespace Library.Graph.Operations.Extensions
         public static int MaxMatching<TValue>(
             this BipartiteGraph<TValue> graph,
             Func<TValue> fakeVertexGenerator)
-            where TValue : notnull, IComparable<TValue>, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new MaxMatchingCalculator<TValue>(graph, fakeVertexGenerator).MaxMatching();
@@ -136,7 +136,7 @@ namespace Library.Graph.Operations.Extensions
         /// <param name="graph">Граф.</param>
         public static IEnumerable<(EdgeItem<TValue> Edge, int Color)> SetupEdgeColoringIterator<TValue>(
             this Graph<TValue> graph)
-            where TValue : notnull, IComparable<TValue>, new()
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new EdgeColoringIterator<TValue>(graph);

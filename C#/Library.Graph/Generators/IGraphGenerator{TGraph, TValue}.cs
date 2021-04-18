@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Library.Graph.Types;
 
 namespace Library.Graph.Generators
@@ -8,7 +11,7 @@ namespace Library.Graph.Generators
     /// <typeparam name="TGraph">Тип графа.</typeparam>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public interface IGraphGenerator<TGraph, TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
         where TGraph : Graph<TValue>
     {
         /// <summary>

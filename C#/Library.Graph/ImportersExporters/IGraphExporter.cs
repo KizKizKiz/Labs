@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Library.Graph.Types;
@@ -15,6 +17,6 @@ namespace Library.Graph.ImportersExporters
         /// <typeparam name="TValue">Тип элементов графа.</typeparam>
         /// <param name="graph">Граф.</param>
         Task ExportAsync<TValue>(Graph<TValue> graph)
-            where TValue : notnull, IStringConvertible<TValue>;
+            where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, IStringConvertible<TValue>;
     }
 }

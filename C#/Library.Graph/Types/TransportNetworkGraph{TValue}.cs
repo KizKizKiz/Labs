@@ -11,7 +11,7 @@ namespace Library.Graph.Types
     /// </summary>
     /// <typeparam name="TValue">Тип элементов транспортной сети.</typeparam>
     public class TransportNetworkGraph<TValue> : Graph<TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Вершина - исток.

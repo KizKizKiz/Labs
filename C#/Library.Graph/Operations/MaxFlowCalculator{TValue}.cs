@@ -11,7 +11,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     public sealed class MaxFlowCalculator<TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         private class FlowCapacityEdge
         {

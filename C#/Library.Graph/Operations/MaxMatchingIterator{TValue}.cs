@@ -11,7 +11,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class MaxMatchingCalculator<TValue>
-        where TValue : notnull, new()
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>, new()
     {
         public MaxMatchingCalculator(BipartiteGraph<TValue> graph, Func<TValue> fakeVertexGenerator)
         {

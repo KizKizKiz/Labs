@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace Library.Graph.Generators
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public sealed class BipartiteGraphGenerator<TValue> : GraphGenerator<BipartiteGraph<TValue>, TValue, BipartiteGraphGeneratorOptions<TValue>>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Конструктор генератора.

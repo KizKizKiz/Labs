@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 
 namespace Library.Graph.Generators.Options
 {
     public sealed class BipartiteGraphGeneratorOptions<TValue> : GeneratorGraphOptions<TValue>
+        where TValue : IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Конструктор настроек.

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Library.Graph.Generators.Options
 {
@@ -7,6 +8,7 @@ namespace Library.Graph.Generators.Options
     /// </summary>
     /// <typeparam name="TValue">Тип элементов транспортной сети.</typeparam>
     public sealed class TransportNetworkGraphGeneratorOptions<TValue> : GeneratorGraphOptions<TValue>
+        where TValue : IEqualityComparer<TValue>, IEquatable<TValue>
     {
         /// <summary>
         /// Количество вершин исходящих из истока.

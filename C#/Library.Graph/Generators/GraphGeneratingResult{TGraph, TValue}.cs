@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Library.Graph.Types;
@@ -11,7 +12,7 @@ namespace Library.Graph.Generators
     /// <typeparam name="TGraph">Тип графа.</typeparam>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public sealed class GraphGeneratingResult<TGraph, TValue>
-        where TValue : notnull
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
         where TGraph : Graph<TValue>
     {
         /// <summary>

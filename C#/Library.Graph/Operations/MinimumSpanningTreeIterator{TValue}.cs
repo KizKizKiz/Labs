@@ -12,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     public sealed class MinimumSpanningTreeIterator<TValue> : IEnumerable<EdgeItem<TValue>>
-         where TValue : notnull, new()
+         where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         public MinimumSpanningTreeIterator(Graph<TValue> graph)
         {

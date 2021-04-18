@@ -12,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class StronglyConnectedComponentsIterator<TValue> : IEnumerable<IEnumerable<TValue>>
-        where TValue : notnull, new()
+        where TValue : notnull, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         private class StronglyConnectedComponentItem
         {

@@ -12,7 +12,7 @@ namespace Library.Graph.Operations
     /// </summary>
     /// <typeparam name="TValue">Тип элементов графа.</typeparam>
     public class DijkstraShortestPathIterator<TValue> : IEnumerable<EdgeItem<TValue>>
-        where TValue : notnull, IComparable<TValue>, new()
+        where TValue : notnull, IComparable<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>
     {
         public DijkstraShortestPathIterator(TransportNetworkGraph<TValue> graph)
         {

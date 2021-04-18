@@ -51,17 +51,20 @@ namespace Library.Graph.Generators
         private void InitBody()
         {
             var stronglyConnectedBody = MapVertexAndLists.Where(c => !c.Key.Equals(_source) && !c.Key.Equals(_target));
-            _ = stronglyConnectedBody.Aggregate((f, s) =>
-              {
-                  var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
-                  _ = f.Value.Items.Add(new EdgeItem<TValue>(f.Key, s.Key, weight));
-                  return s;
-              });
-            var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+            var weight = 0.0;
+            if (stronglyConnectedBody.Count() > 1)
+            {
+                _ = stronglyConnectedBody.Aggregate((f, s) =>
+                  {
+                      var weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
+                      _ = f.Value.Items.Add(new EdgeItem<TValue>(f.Key, s.Key, weight));
+                      return s;
+                  });
+                weight = Randomizer.FromRange(Options.Range.minimum, Options.Range.maximum);
 
-            var lastPair = stronglyConnectedBody.Last();
-            _ = lastPair.Value.Items.Add(new EdgeItem<TValue>(lastPair.Key, stronglyConnectedBody.First().Key, weight));
-
+                var lastPair = stronglyConnectedBody.Last();
+                _ = lastPair.Value.Items.Add(new EdgeItem<TValue>(lastPair.Key, stronglyConnectedBody.First().Key, weight));
+            }
             foreach (var kv in stronglyConnectedBody)
             {
                 var _verticesCount = kv.Value.Count > Options.VerticesCount - 2 ? Options.VerticesCount - 2 : kv.Value.Count; //_verticesCount - 2 (_source, _target)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using Library.Graph.ExampleConvertibleTypes;
 using Library.Graph.Types;
 
 namespace Library.Graph.Operations.Extensions
@@ -89,6 +90,28 @@ namespace Library.Graph.Operations.Extensions
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new DijkstraShortestPathIterator<TValue>(graph);
+        }
+        /// <summary>
+        /// Возвращает итератор кратчайшего пути от одной вершины к другой.
+        /// </summary>
+        /// <param name="graph">Граф.</param>
+        /// <param name="s">Начальная вершина.</param>
+        /// <param name="t">Конечная вершина.</param>
+        public static IEnumerable<IntConvertible> SetupFloydWarshallWalkingFromSourceToTarget(
+           this Graph<IntConvertible> graph, int s, int t)
+        {
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new FloydWarshallIterator(graph).GetIteratorFromSourceToTarget(s, t);
+        }
+        /// <summary>
+        /// Возвращает итератор всех кратчайших путей.
+        /// </summary>
+        /// <param name="graph">Граф.</param>
+        public static IEnumerable<IEnumerable<IntConvertible>> SetupFloydWarshallWalking(
+           this Graph<IntConvertible> graph)
+        {
+            return graph is null ? throw new ArgumentNullException(nameof(graph))
+                : new FloydWarshallIterator(graph);
         }
 
         /// <summary>

@@ -33,6 +33,7 @@ namespace Library.Graph.ImportersExporters
         /// </summary>
         /// <param name="folderPath">Путь до папки, содержащей графы.</param>
         public SpreadSheetImporterExporter(string folderPath)
+            : this()
         {
             if (folderPath is null)
             {
@@ -42,7 +43,7 @@ namespace Library.Graph.ImportersExporters
             {
                 throw new ArgumentException("The folder path cannot be empty or consist of whitespaces.", nameof(folderPath));
             }
-            if (Directory.Exists(folderPath))
+            if (!Directory.Exists(folderPath))
             {
                 throw new ArgumentException("The folder path doesn't exist on disk.");
             }
@@ -94,7 +95,15 @@ namespace Library.Graph.ImportersExporters
         }
 
         /// <inheritdoc/>
-        public Task<Graph<TValue>> ImportAsync<TValue>(Stream stream)
+        public async Task<TransportNetworkGraph<TValue>> ImportTransportNetworkAsync<TValue>(Stream stream)
+            where TValue : notnull, IStringConvertible<TValue>, new()
+        {
+            var graph = await ImportGraphAsync<TValue>(stream);
+            return new TransportNetworkGraph<TValue>(graph.Items.Values, graph.Vertices);
+        }
+
+        /// <inheritdoc/>
+        public Task<Graph<TValue>> ImportGraphAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             if (stream is null)
@@ -123,7 +132,7 @@ namespace Library.Graph.ImportersExporters
             {
                 var value = new TValue();
                 var first = GetSource(worksheet, i, value);
-                var second = GetTarget(worksheet, i, value);
+                var valueAndIsDefault = GetTarget(worksheet, i, value);
                 var weight = GetWeight(worksheet, i);
 
                 edgeType = GetEdgeType(worksheet, edgeType, i);
@@ -132,13 +141,13 @@ namespace Library.Graph.ImportersExporters
                 {
                     mapVertexAndEdges[first] = new();
                 }
-                if (second is not null)
+                if (!valueAndIsDefault.isDefault)
                 {
-                    if (!mapVertexAndEdges.ContainsKey(second))
+                    if (!mapVertexAndEdges.ContainsKey(valueAndIsDefault.value))
                     {
-                        mapVertexAndEdges[second] = new();
+                        mapVertexAndEdges[valueAndIsDefault.value] = new();
                     }
-                    mapVertexAndEdges[first].Add(new EdgeItem<TValue>(first, second, weight));
+                    mapVertexAndEdges[first].Add(new EdgeItem<TValue>(first, valueAndIsDefault.value, weight));
                 }
             }
 
@@ -185,18 +194,17 @@ namespace Library.Graph.ImportersExporters
             return weight;
         }
 
-        private static TValue GetTarget<TValue>(ExcelWorksheet worksheet, int i, TValue converterValue)
+        private static (TValue value, bool isDefault) GetTarget<TValue>(ExcelWorksheet worksheet, int i, TValue converterValue)
             where TValue : notnull, IStringConvertible<TValue>, new()
         {
             var value = worksheet.Cells[i, 2].Value;
 
-            TValue second = default!;
             if (!string.IsNullOrWhiteSpace(value?.ToString()))
             {
-                second = converterValue.ConvertFromString(value.ToString()!);
+                return (converterValue.ConvertFromString(value.ToString()!), false);
             }
 
-            return second;
+            return (default!, true);
         }
 
         private static TValue GetSource<TValue>(ExcelWorksheet worksheet, int i, TValue converterValue)

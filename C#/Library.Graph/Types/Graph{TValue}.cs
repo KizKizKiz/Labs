@@ -175,6 +175,7 @@ namespace Library.Graph.Types
 
             VerifyDirection();
             SetIsWeighted();
+            ConnectivityType = GraphDeterminantHelper.DeterminateConnectivity(this);
         }
 
         /// <summary>
@@ -189,8 +190,23 @@ namespace Library.Graph.Types
             IEnumerable<TValue> vertices,
             bool isOriented,
             ConnectivityType connectivityType)
-            : this(items, vertices, isOriented)
         {
+            if (items is null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+            if (vertices is null)
+            {
+                throw new ArgumentNullException(nameof(vertices));
+            }
+            if (!items.Any())
+            {
+                throw new ArgumentException("The items collection is empty.", nameof(items));
+            }
+            if (!vertices.Any())
+            {
+                throw new ArgumentException("The vertices collection is empty.", nameof(vertices));
+            }
             if (!Enum.IsDefined(connectivityType))
             {
                 throw new InvalidEnumArgumentException(nameof(connectivityType), (int)connectivityType, typeof(ConnectivityType));
@@ -199,9 +215,14 @@ namespace Library.Graph.Types
             {
                 throw new ArgumentException($"The undirected graph can be only '{ConnectivityType.NotConnected}' or {ConnectivityType.WeaklyOrJustConnected}.");
             }
+            Vertices = vertices.ToList();
+            Items = items.ToDictionary(c => c.Vertex);
+            IsOriented = isOriented;
             ConnectivityType = connectivityType;
 
             VerifyConnectivityType();
+            VerifyDirection();
+            SetIsWeighted();
         }
 
         /// <summary>
@@ -218,8 +239,23 @@ namespace Library.Graph.Types
             bool isOriented,
             ConnectivityType connectivityType,
             bool needToValidateConnectivityType = false)
-            : this(items, vertices, isOriented)
         {
+            if (items is null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+            if (vertices is null)
+            {
+                throw new ArgumentNullException(nameof(vertices));
+            }
+            if (!items.Any())
+            {
+                throw new ArgumentException("The items collection is empty.", nameof(items));
+            }
+            if (!vertices.Any())
+            {
+                throw new ArgumentException("The vertices collection is empty.", nameof(vertices));
+            }
             if (!Enum.IsDefined(connectivityType))
             {
                 throw new InvalidEnumArgumentException(nameof(connectivityType), (int)connectivityType, typeof(ConnectivityType));
@@ -228,12 +264,17 @@ namespace Library.Graph.Types
             {
                 throw new ArgumentException($"The undirected graph can be only '{ConnectivityType.NotConnected}' or {ConnectivityType.WeaklyOrJustConnected}.");
             }
+            Vertices = vertices.ToList();
+            Items = items.ToDictionary(c => c.Vertex);
+            IsOriented = isOriented;
 
             ConnectivityType = connectivityType;
             if (needToValidateConnectivityType)
             {
                 VerifyConnectivityType();
             }
+            VerifyDirection();
+            SetIsWeighted();
         }
 
         /// <summary>

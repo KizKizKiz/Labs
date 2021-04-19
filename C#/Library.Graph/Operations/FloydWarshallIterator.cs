@@ -56,6 +56,11 @@ namespace Library.Graph.Operations
                     _distTo[e.Source.Number, e.Target.Number] = e.Weight!.Value;
                     _edgeTo[e.Source.Number, e.Target.Number] = e;
                 }
+                if (_distTo[v, v] >= 0.0)
+                {
+                    _distTo[v, v] = 0.0;
+                    _edgeTo[v, v] = null!;
+                }
             }
         }
         private bool HasPath(int s, int t) => _distTo[s, t] < double.MaxValue;

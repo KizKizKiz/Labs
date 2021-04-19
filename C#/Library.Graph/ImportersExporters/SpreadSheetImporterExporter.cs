@@ -102,6 +102,7 @@ namespace Library.Graph.ImportersExporters
             return new TransportNetworkGraph<TValue>(graph.Items.Values, graph.Vertices);
         }
 
+        /// <inheritdoc/>
         public async Task<BipartiteGraph<TValue>> ImportBipartiteGraphAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
         {

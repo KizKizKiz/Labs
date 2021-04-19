@@ -29,5 +29,14 @@ namespace Library.Graph.ImportersExporters
         /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
         Task<TransportNetworkGraph<TValue>> ImportTransportNetworkAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new();
+
+        /// <summary>
+        /// Возвращает двудольный граф из <paramref name="stream"/>.
+        /// </summary>
+        /// <typeparam name="TValue">Тип элементов графа.</typeparam>
+        /// <param name="stream">Поток чтения графа.</param>
+        /// <returns>Граф типа <typeparamref name="TValue"/>.</returns>
+        Task<BipartiteGraph<TValue>> ImportBipartiteGraphAsync<TValue>(Stream stream)
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new();
     }
 }

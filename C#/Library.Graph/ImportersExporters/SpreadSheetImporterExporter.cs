@@ -102,6 +102,13 @@ namespace Library.Graph.ImportersExporters
             return new TransportNetworkGraph<TValue>(graph.Items.Values, graph.Vertices);
         }
 
+        public async Task<BipartiteGraph<TValue>> ImportBipartiteGraphAsync<TValue>(Stream stream)
+            where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
+        {
+            var graph = await ImportGraphAsync<TValue>(stream);
+            return new BipartiteGraph<TValue>(graph.Items.Values, graph.Vertices);
+        }
+
         /// <inheritdoc/>
         public Task<Graph<TValue>> ImportGraphAsync<TValue>(Stream stream)
             where TValue : notnull, IStringConvertible<TValue>, IEqualityComparer<TValue>, IEquatable<TValue>, new()
@@ -110,16 +117,19 @@ namespace Library.Graph.ImportersExporters
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            stream.Position = 0;
+            using (stream)
+            {
+                stream.Position = 0;
 
-            using var package = new ExcelPackage(stream);
-            var worksheet = package.Workbook.Worksheets.Count == 0 ?
-                throw new InvalidOperationException("Received workbook without worksheets.") :
-                package.Workbook.Worksheets[0];
+                using var package = new ExcelPackage(stream);
+                var worksheet = package.Workbook.Worksheets.Count == 0 ?
+                    throw new InvalidOperationException("Received workbook without worksheets.") :
+                    package.Workbook.Worksheets[0];
 
-            VerifyHeaders(worksheet);
+                VerifyHeaders(worksheet);
 
-            return Task.FromResult(CreateGraph<TValue>(worksheet));
+                return Task.FromResult(CreateGraph<TValue>(worksheet));
+            }
         }
 
         private Graph<TValue> CreateGraph<TValue>(ExcelWorksheet worksheet)
@@ -253,7 +263,7 @@ namespace Library.Graph.ImportersExporters
 
         private string CreateFullPath()
         {
-            var fileName = $"graph-{DateTime.Now:HH-MM-ss}.xlsx";
+            var fileName = $"graph-{DateTime.Now:HH-mm-ss}.xlsx";
             var path = FolderPath is not null ? Path.Combine(FolderPath, fileName) : fileName;
             return path;
         }

@@ -23,9 +23,9 @@ namespace Library.Graph.Extensions
             {
                 throw new ArgumentException("Graph have to be weighted.", nameof(graph));
             }
-            var result = new double[graph.LeftShare.Count, graph.RightShare.Count];
-            var rowCount = 0;
-            var columnCount = 0;
+            var result = new double[graph.LeftShare.Count + 1, graph.RightShare.Count + 1];
+            var rowCount = 1;
+            var columnCount = 1;
             var mapRowIndexAndVertex = graph.LeftShare.ToDictionary(_ => rowCount++, c => c.Key);
             var mapColumnIndexAndVertex = graph.RightShare.ToDictionary(_ => columnCount++, c => c.Key);
 

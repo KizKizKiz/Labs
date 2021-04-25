@@ -2,12 +2,11 @@ using System;
 
 using Library.Graph.ExampleConvertibleTypes;
 using Library.Graph.Generators;
-using Library.Graph.ImportersExporters;
 using Library.Graph.Generators.Options;
-using System.Threading.Tasks;
 using Library.Graph.Types;
 using Library.Graph.Extensions;
 using System.Linq;
+using Library.Graph.Operations.Extensions;
 
 namespace Console.Graph
 {
@@ -18,9 +17,21 @@ namespace Console.Graph
             //var graph = UnorientedGraphGenerate();
             //var graph = OrientedGraphGenerate();
             //var graph = TransportNetworkGenerate();
-            ///var graph = BipartiteGraphGenerate();
+            //var graph = BipartiteGraphGenerate();
             //await _exporter.ExportAsync(graph);
-            var graph = FullyConnectedBipartiteGraphGenerate();
+            //var graph = FullyConnectedBipartiteGraphGenerate();
+            var graph = new BipartiteGraph<IntConvertible>(
+                new AdjacensyEdgeItem<IntConvertible>[]
+                {
+                    new(4, new EdgeItem<IntConvertible>[] { new(4, 5, 31), new(4, 3, 45), new(4, 0, 28)}),
+                    new(7, new EdgeItem<IntConvertible>[] { new(7, 5, 8), new(7, 3, 19), new(7, 0, 26)}),
+                    new(2, new EdgeItem<IntConvertible>[] { new(2, 5, 30), new(2, 3, 2), new(2, 0, 47)}),
+
+                    new(5, new EdgeItem<IntConvertible>[] { new(5, 4, 31), new(5, 7, 8), new(5, 2, 30)}),
+                    new(0, new EdgeItem<IntConvertible>[] { new(0, 4, 28), new(0, 7, 26), new(0, 2, 47)}),
+                    new(3, new EdgeItem<IntConvertible>[] { new(3, 4, 45), new(3, 7, 19), new(3, 2, 2)}),
+                },
+                new IntConvertible[] { 4, 7, 2, 3, 5, 0 });
             foreach (var item in graph.LeftShare)
             {
                 System.Console.WriteLine(item);
@@ -41,7 +52,10 @@ namespace Console.Graph
                 }
                 System.Console.WriteLine();
             }
-
+            foreach(var pair in graph.SetupHungarianAlgorithm())
+            {
+                System.Console.WriteLine(string.Join("->",pair));
+            }
         }
 
         private static Graph<IntConvertible> UnorientedGraphGenerate()
@@ -61,7 +75,7 @@ namespace Console.Graph
         {
             var generator = new FullyConnectedBipartiteGraphGenerator(
                 new FullyConnectedBipartiteGraphGeneratorOptions(
-                    4,
+                    3,
                     () => _rnd.Next(0, 8),
                     (1, 50)));
             var result = generator.Generate();

@@ -21,10 +21,6 @@ namespace Library.Graph.Generators.Options
             (int min, int max) range)
             : base(verticesCount, verticesCount / 2, factory, range)
         {
-            if (verticesCount % 2 != 0)
-            {
-                throw new ArgumentException("Vertices count should be even number.", nameof(verticesCount));
-            }
         }
     }
 }

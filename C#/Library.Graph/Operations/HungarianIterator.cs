@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using Library.Graph.Extensions;
 using Library.Graph.ExampleConvertibleTypes;
 using Library.Graph.Types;
+using System.Collections;
 
 namespace Library.Graph.Operations
 {
-    public class HungarianIterator
+    public class HungarianIterator : IEnumerable<IEnumerable<IntConvertible>>
     {
-        public HungarianIterator(Graph<IntConvertible> graph)
+        public HungarianIterator(BipartiteGraph<IntConvertible> graph)
         {
             if (graph is null)
             {
@@ -29,12 +29,18 @@ namespace Library.Graph.Operations
             {
                 throw new ArgumentException("For Hungarian algorithm negative weight is not valid.");
             }
-            _n = graph.Vertices.Count;
-            //_a = graph;
-            _v = new int[_n + 1];
-            _u = new int[_n + 1];
-            _p = new int[_n + 1];
-            _way = new int[_n + 1];
+
+            (_a, _mapRowVertex, _mapColumnVertex) = graph.ToDoubleDemensionalArray();
+
+            _n = _mapRowVertex.Count;
+            _m = _mapColumnVertex.Count;
+
+            _v = new double[_n+1];
+            _u = new double[_m + 1];
+            _p = new int[_m + 1];
+            _way = new int[_m + 1];
+            _ans = new int[_n + 1];
+
             HungarianExecute();
         }
         private void HungarianExecute()
@@ -43,17 +49,17 @@ namespace Library.Graph.Operations
             {
                 _p[0] = i;
                 var j0 = 0;
-                var minv = new int[_n + 1];
-                Array.Fill(minv, int.MaxValue);
-                var used = new bool[_n + 1];
+                var minv = new double[_m + 1];
+                Array.Fill(minv, double.MaxValue);
+                var used = new bool[_m + 1];
                 Array.Fill(used, false);
                 do
                 {
                     used[j0] = true;
                     var i0 = _p[j0];
-                    var delta = int.MaxValue;
+                    var delta = double.MaxValue;
                     var j1 = 0;
-                    for (var j = 1; j <= _n; ++j)
+                    for (var j = 1; j <= _m; ++j)
                     {
                         if (!used[j])
                         {
@@ -70,7 +76,7 @@ namespace Library.Graph.Operations
                             }
                         }
                     }
-                    for (var j = 0; j <= _n; ++j)
+                    for (var j = 0; j < =_m; ++j)
                     {
                         if (used[j])
                         {
@@ -93,11 +99,29 @@ namespace Library.Graph.Operations
                 } while (j0 > 0);
             }
         }
-        private int[] _u;
-        private int[] _v;
-        private int[] _p;
-        private int[] _way;
-        private int _n;
-        private int[,] _a;
+        public IEnumerator<IEnumerable<IntConvertible>> GetEnumerator()
+        {
+            for (var j = 0; j < _m; ++j)
+            {
+                _ans[_p[j]] = j;
+            }
+            for (var j = 0; j < _m; ++j)
+            {
+                yield return
+                    new List<IntConvertible>() { _mapRowVertex[j], _mapColumnVertex[_ans[j]] };
+            }
+        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private readonly double[] _u;
+        private readonly double[] _v;
+        private readonly int[] _p;
+        private readonly int[] _way;
+        private readonly int _n;
+        private readonly int _m;
+        private readonly double[,] _a;
+        private readonly int[] _ans;
+        private readonly IReadOnlyDictionary<int, IntConvertible> _mapRowVertex;
+        private readonly IReadOnlyDictionary<int, IntConvertible> _mapColumnVertex;
     }
 }

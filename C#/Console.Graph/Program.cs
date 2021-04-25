@@ -45,7 +45,7 @@ namespace Console.Graph
             System.Console.WriteLine("  " + string.Join(' ', mapColVertex.Select(c => (c.Key, c.Value))));
             for (var i = 0; i < matrix.GetLength(0); i++)
             {
-                System.Console.Write($"[{i}]{mapRowVertex[i]} ");
+                //System.Console.Write($"[{i}]{mapRowVertex[i]} ");
                 for (var j = 0; j < matrix.GetLength(1); j++)
                 {
                     System.Console.Write($"{matrix[i, j]}\t");
@@ -54,7 +54,7 @@ namespace Console.Graph
             }
             foreach(var pair in graph.SetupHungarianAlgorithm())
             {
-                System.Console.WriteLine(string.Join("->",pair));
+                System.Console.WriteLine(pair);
             }
         }
 

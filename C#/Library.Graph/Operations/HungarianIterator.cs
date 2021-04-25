@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +9,10 @@ using System.Collections;
 
 namespace Library.Graph.Operations
 {
-    public class HungarianIterator : IEnumerable<IEnumerable<IntConvertible>>
+    /// <summary>
+    /// Представляет итератор поиска рещения задачи о назначениях в графе.
+    /// </summary>
+    public class HungarianIterator : IEnumerable<EdgeItem<IntConvertible>>
     {
         public HungarianIterator(BipartiteGraph<IntConvertible> graph)
         {
@@ -76,7 +79,7 @@ namespace Library.Graph.Operations
                             }
                         }
                     }
-                    for (var j = 0; j < =_m; ++j)
+                    for (var j = 0; j <=_m; ++j)
                     {
                         if (used[j])
                         {
@@ -99,16 +102,21 @@ namespace Library.Graph.Operations
                 } while (j0 > 0);
             }
         }
-        public IEnumerator<IEnumerable<IntConvertible>> GetEnumerator()
+
+        /// <summary>
+        /// Возвращает итератор поиска решения задачи о назначениях в графе.
+        /// </summary>
+        /// <returns>Последовательность ребер, входящих в решение о назначениях.</returns>
+        public IEnumerator<EdgeItem<IntConvertible>> GetEnumerator()
         {
-            for (var j = 0; j < _m; ++j)
+            for (var j = 1; j <= _m; ++j)
             {
                 _ans[_p[j]] = j;
             }
-            for (var j = 0; j < _m; ++j)
+            for (var j = 1; j <= _m; ++j)
             {
                 yield return
-                    new List<IntConvertible>() { _mapRowVertex[j], _mapColumnVertex[_ans[j]] };
+                    new EdgeItem<IntConvertible>(_mapRowVertex[j], _mapColumnVertex[_ans[j]], _u[j]);
             }
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

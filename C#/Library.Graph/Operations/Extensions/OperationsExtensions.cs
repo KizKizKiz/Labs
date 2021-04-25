@@ -141,7 +141,12 @@ namespace Library.Graph.Operations.Extensions
             return graph is null ? throw new ArgumentNullException(nameof(graph))
                 : new EdgeColoringIterator<TValue>(graph);
         }
-        public static IEnumerable<IEnumerable<IntConvertible>> SetupHungarianAlgorithm(
+
+        /// <summary>
+        /// Возвращает итератор поиска решения задачи о назначении графа.
+        /// </summary>
+        /// <param name="graph">Граф.</param>
+        public static IEnumerable<EdgeItem<IntConvertible>> SetupHungarianAlgorithm(
             this BipartiteGraph<IntConvertible> graph)
         {
             return graph is null ? throw new ArgumentNullException(nameof(graph))

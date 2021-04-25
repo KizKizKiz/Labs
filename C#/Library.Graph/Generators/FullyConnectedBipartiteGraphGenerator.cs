@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,6 +35,28 @@ namespace Library.Graph.Generators
                     MapVertexAndLists.Keys));
         }
 
+        /// <inheritdoc/>
+        protected override Dictionary<IntConvertible, (int count, HashSet<EdgeItem<IntConvertible>> items)> Prepare()
+        {
+            var mapVertexAndTuple = new Dictionary<IntConvertible, (int count, HashSet<EdgeItem<IntConvertible>> items)>();
+
+            var anomalyDetected = 10_000_000;
+            while (mapVertexAndTuple.Count != Options.VerticesCount * 2)
+            {
+                if (anomalyDetected-- == 0)
+                {
+                    throw new InvalidOperationException("Detected anomaly, cause received bad vertex factory.");
+                }
+                var vertex = Options.VerticiesFactory();
+                if (!mapVertexAndTuple.ContainsKey(vertex))
+                {
+                    mapVertexAndTuple.Add(vertex, (count: Options.VerticesCount, items: new HashSet<EdgeItem<IntConvertible>>()));
+                }
+            }
+
+            return mapVertexAndTuple;
+        }
+
         private void ConnectShares()
         {
             foreach (var leftItem in _leftShare)
@@ -58,7 +81,7 @@ namespace Library.Graph.Generators
         {
             var vertices = MapVertexAndLists.Keys.ToList();
 
-            var shareCount = Options.VerticesCount / 2;
+            var shareCount = Options.VerticesCount;
 
             while (_leftShare.Count != shareCount)
             {

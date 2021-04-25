@@ -11,13 +11,23 @@ namespace Console.Graph
 {
     public class Program
     {
-        private static async Task Main()
+        private static void Main()
         {
             //var graph = UnorientedGraphGenerate();
-            var graph = OrientedGraphGenerate();
+            //var graph = OrientedGraphGenerate();
             //var graph = TransportNetworkGenerate();
-            //var graph = BipartiteGraphGenerate();
-            await _exporter.ExportAsync(graph);
+            var graph = BipartiteGraphGenerate();
+            //await _exporter.ExportAsync(graph);
+            //var graph = FullyConnectedBipartiteGraphGenerate();
+            foreach (var item in graph.LeftShare)
+            {
+                System.Console.WriteLine(item);
+            }
+            System.Console.WriteLine();
+            foreach (var item in graph.RightShare)
+            {
+                System.Console.WriteLine(item);
+            }
         }
 
         private static Graph<IntConvertible> UnorientedGraphGenerate()
@@ -29,6 +39,17 @@ namespace Console.Graph
                     () => _rnd.Next(0, 20),
                     (0, 0),
                     true));
+            var result = generator.Generate();
+            return result.Graph;
+        }
+
+        private static BipartiteGraph<IntConvertible> FullyConnectedBipartiteGraphGenerate()
+        {
+            var generator = new FullyConnectedBipartiteGraphGenerator(
+                new FullyConnectedBipartiteGraphGeneratorOptions(
+                    8,
+                    () => _rnd.Next(0, 8),
+                    (1, 50)));
             var result = generator.Generate();
             return result.Graph;
         }
@@ -60,7 +81,7 @@ namespace Console.Graph
             return result.Graph;
         }
 
-        private static Graph<IntConvertible> BipartiteGraphGenerate()
+        private static BipartiteGraph<IntConvertible> BipartiteGraphGenerate()
         {
             var generator = new BipartiteGraphGenerator<IntConvertible>(
                 new BipartiteGraphGeneratorOptions<IntConvertible>(
@@ -70,7 +91,7 @@ namespace Console.Graph
             return result.Graph;
         }
 
-        private static readonly Random _rnd = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-        private static readonly SpreadSheetImporterExporter _exporter = new();
+        private static readonly Random _rnd = new((int)DateTime.Now.Ticks & 0x0000FFFF);
+        //private static readonly SpreadSheetImporterExporter _exporter = new();
     }
 }

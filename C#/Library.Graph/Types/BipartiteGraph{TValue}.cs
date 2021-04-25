@@ -24,6 +24,11 @@ namespace Library.Graph.Types
         public IReadOnlyDictionary<TValue, AdjacensyEdgeItem<TValue>> RightShare { get; private set; } = default!;
 
         /// <summary>
+        /// Флаг, является ли граф полносвязным с одинаковым количество элементов в долях.
+        /// </summary>
+        public bool AreSharesHaveSameSizeAndFullyConnected { get; private set; }
+
+        /// <summary>
         /// Конструктор двудольного графа.
         /// </summary>
         /// <param name="items">Список смежностей, который состоит из ребер.</param>
@@ -34,6 +39,16 @@ namespace Library.Graph.Types
             : base(items, vertices, false, ConnectivityType.WeaklyOrJustConnected, true)
         {
             VerifyBipartiteAndSetShares();
+            VerifyAreFullyConnectedAndHaveSameSize();
+        }
+
+        private void VerifyAreFullyConnectedAndHaveSameSize()
+        {
+            if (RightShare.Count == LeftShare.Count
+                && LeftShare.All(c => c.Value.Items.Select(v => v.Target).ToHashSet().Count == RightShare.Count))
+            {
+                AreSharesHaveSameSizeAndFullyConnected = true;
+            }
         }
 
         private void VerifyBipartiteAndSetShares()
